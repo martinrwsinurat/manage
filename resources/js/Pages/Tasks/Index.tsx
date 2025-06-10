@@ -1,10 +1,10 @@
+import React from "react";
 import { Head, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
@@ -13,6 +13,7 @@ import { User } from "@/types";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, User as UserIcon } from "lucide-react";
+import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 
 interface Task {
     id: number;
@@ -37,11 +38,41 @@ interface Props {
     tasks: Task[];
 }
 
+const columns = [
+    { id: "todo", title: "Belum Dikerjakan" },
+    { id: "in_progress", title: "Sedang Dikerjakan" },
+    { id: "completed", title: "Selesai" },
+];
+
 export default function Index({ auth, tasks }: Props) {
-    const tasksByStatus = {
-        todo: tasks.filter((task) => task.status === "todo"),
-        in_progress: tasks.filter((task) => task.status === "in_progress"),
-        completed: tasks.filter((task) => task.status === "completed"),
+    const [taskState, setTaskState] = React.useState<Task[]>(tasks);
+
+    const getTasksByStatus = (status: Task["status"]) =>
+        taskState.filter((task) => task.status === status);
+
+    const onDragEnd = (result: DropResult) => {
+        if (!result.destination) return;
+        const { source, destination, draggableId } = result;
+
+        // Jika drop di kolom yang sama dan urutan sama, tidak perlu update
+        if (
+            source.droppableId === destination.droppableId &&
+            source.index === destination.index
+        ) {
+            return;
+        }
+
+        const taskId = parseInt(draggableId);
+        const task = taskState.find((t) => t.id === taskId);
+        if (!task) return;
+
+        const newStatus = destination.droppableId as Task["status"];
+        setTaskState((prev) =>
+            prev.map((t) =>
+                t.id === taskId ? { ...t, status: newStatus } : t
+            )
+        );
+        // TODO: Kirim update ke backend jika ingin persist perubahan status
     };
 
     return (
@@ -49,11 +80,11 @@ export default function Index({ auth, tasks }: Props) {
             user={auth.user}
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Tasks
+                    Daftar Tugas
                 </h2>
             }
         >
-            <Head title="Tasks" />
+            <Head title="Tugas" />
 
             <div
                 className="py-12 min-h-screen"
@@ -63,44 +94,57 @@ export default function Index({ auth, tasks }: Props) {
             >
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="mb-6 flex justify-between items-center">
-                        <h1 className="text-2xl font-semibold">My Tasks</h1>
+                        <h1 className="text-2xl font-semibold">Tugas Saya</h1>
                         <Button asChild>
-                            <Link href="/tasks/create">Create Task</Link>
+                            <Link href="/tasks/create">Buat Tugas</Link>
                         </Button>
                     </div>
 
-                    <div className="grid gap-6 md:grid-cols-3">
-                        <div>
-                            <h3 className="text-lg font-medium mb-4">To Do</h3>
-                            <div className="space-y-4">
-                                {tasksByStatus.todo.map((task) => (
-                                    <TaskCard key={task.id} task={task} />
-                                ))}
-                            </div>
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <div className="grid gap-6 md:grid-cols-3">
+                            {columns.map((col) => (
+                                <Droppable droppableId={col.id} key={col.id}>
+                                    {(provided, snapshot) => (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.droppableProps}
+                                            className={`min-h-[200px] p-2 rounded-lg transition-colors ${
+                                                snapshot.isDraggingOver
+                                                    ? "bg-orange-100"
+                                                    : ""
+                                            }`}
+                                        >
+                                            <h3 className="text-lg font-medium mb-4">{col.title}</h3>
+                                            <div className="space-y-4">
+                                                {getTasksByStatus(col.id as Task["status"]).map((task, i) => (
+                                                    <Draggable
+                                                        key={task.id}
+                                                        draggableId={task.id.toString()}
+                                                        index={i}
+                                                    >
+                                                        {(provided, snapshot) => (
+                                                            <div
+                                                                ref={provided.innerRef}
+                                                                {...provided.draggableProps}
+                                                                {...provided.dragHandleProps}
+                                                                style={{
+                                                                    ...provided.draggableProps.style,
+                                                                    opacity: snapshot.isDragging ? 0.7 : 1,
+                                                                }}
+                                                            >
+                                                                <TaskCard task={task} />
+                                                            </div>
+                                                        )}
+                                                    </Draggable>
+                                                ))}
+                                                {provided.placeholder}
+                                            </div>
+                                        </div>
+                                    )}
+                                </Droppable>
+                            ))}
                         </div>
-
-                        <div>
-                            <h3 className="text-lg font-medium mb-4">
-                                In Progress
-                            </h3>
-                            <div className="space-y-4">
-                                {tasksByStatus.in_progress.map((task) => (
-                                    <TaskCard key={task.id} task={task} />
-                                ))}
-                            </div>
-                        </div>
-
-                        <div>
-                            <h3 className="text-lg font-medium mb-4">
-                                Completed
-                            </h3>
-                            <div className="space-y-4">
-                                {tasksByStatus.completed.map((task) => (
-                                    <TaskCard key={task.id} task={task} />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                    </DragDropContext>
                 </div>
             </div>
         </AuthenticatedLayout>
@@ -122,7 +166,11 @@ function TaskCard({ task }: { task: Task }) {
                                 : "secondary"
                         }
                     >
-                        {task.status.replace("_", " ")}
+                        {task.status === "todo"
+                            ? "Belum Dikerjakan"
+                            : task.status === "in_progress"
+                            ? "Sedang Dikerjakan"
+                            : "Selesai"}
                     </Badge>
                 </div>
             </CardHeader>
@@ -131,16 +179,16 @@ function TaskCard({ task }: { task: Task }) {
                 <div className="mt-2 space-y-2">
                     <div className="flex items-center text-sm text-gray-600">
                         <Calendar className="w-4 h-4 mr-1" />
-                        <span>Due: {formatDate(task.due_date)}</span>
+                        <span>Jatuh Tempo: {formatDate(task.due_date)}</span>
                     </div>
                     <div className="flex items-center text-sm text-gray-600">
                         <UserIcon className="w-4 h-4 mr-1" />
                         <span>
-                            Assigned to: {task.assignee?.name || "Unassigned"}
+                            Ditugaskan kepada: {task.assignee?.name || "Belum Ditugaskan"}
                         </span>
                     </div>
                     <div className="text-sm text-gray-600">
-                        Project:{" "}
+                        Proyek:{" "}
                         <Link
                             href={`/projects/${task.project.id}`}
                             className="text-primary hover:underline"
@@ -152,7 +200,7 @@ function TaskCard({ task }: { task: Task }) {
             </CardContent>
             <CardFooter>
                 <Button variant="outline" className="w-full" asChild>
-                    <Link href={`/tasks/${task.id}`}>View Details</Link>
+                    <Link href={`/tasks/${task.id}`}>Lihat Detail</Link>
                 </Button>
             </CardFooter>
         </Card>

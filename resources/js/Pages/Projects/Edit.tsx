@@ -91,23 +91,23 @@ export default function Edit({ project, auth }: Props) {
                         <Button variant="ghost" asChild className="bg-white/30 hover:bg-white/50 text-white">
                             <Link href={route("projects.show", project.id)}>
                                 <ArrowLeft className="mr-2 h-4 w-4" />
-                                Back to Project
+                                Kembali ke Proyek
                             </Link>
                         </Button>
-                        <h1 className="text-2xl font-bold text-white drop-shadow-lg">Edit Project</h1>
+                        <h1 className="text-2xl font-bold text-white drop-shadow-lg">Edit Proyek</h1>
                     </div>
 
                     <Card className="bg-white/90 shadow-xl">
                         <form onSubmit={handleSubmit}>
                             <CardHeader>
-                                <CardTitle className="text-orange-700">Project Details</CardTitle>
+                                <CardTitle className="text-orange-700">Detail Proyek</CardTitle>
                                 <CardDescription>
-                                    Update the project details below.
+                                    Perbarui detail proyek di bawah ini.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-5">
                                 <div className="space-y-2">
-                                    <Label htmlFor="name" className="text-orange-700">Project Name</Label>
+                                    <Label htmlFor="name" className="text-orange-700">Nama Proyek</Label>
                                     <Input
                                         id="name"
                                         value={data.name}
@@ -125,7 +125,7 @@ export default function Edit({ project, auth }: Props) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="description" className="text-orange-700">
-                                        Description
+                                        Deskripsi
                                     </Label>
                                     <Textarea
                                         id="description"
@@ -158,20 +158,20 @@ export default function Edit({ project, auth }: Props) {
                                         ) => setData("status", value)}
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select status" />
+                                            <SelectValue placeholder="Pilih status" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="not_started">
-                                                Not Started
+                                                Belum Dimulai
                                             </SelectItem>
                                             <SelectItem value="in_progress">
-                                                In Progress
+                                                Sedang Berjalan
                                             </SelectItem>
                                             <SelectItem value="on_hold">
-                                                On Hold
+                                                Ditunda
                                             </SelectItem>
                                             <SelectItem value="completed">
-                                                Completed
+                                                Selesai
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -183,7 +183,7 @@ export default function Edit({ project, auth }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label className="text-orange-700">Project Timeline</Label>
+                                    <Label className="text-orange-700">Jadwal Proyek</Label>
                                     <DatePickerWithRange
                                         date={dateRange}
                                         onDateChange={handleDateRangeChange}
@@ -197,7 +197,7 @@ export default function Edit({ project, auth }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="budget" className="text-orange-700">Budget</Label>
+                                    <Label htmlFor="budget" className="text-orange-700">Anggaran</Label>
                                     <Input
                                         id="budget"
                                         type="number"
@@ -215,7 +215,7 @@ export default function Edit({ project, auth }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="category" className="text-orange-700">Category</Label>
+                                    <Label htmlFor="category" className="text-orange-700">Kategori</Label>
                                     <Input
                                         id="category"
                                         value={data.category}
@@ -231,7 +231,7 @@ export default function Edit({ project, auth }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label className="text-orange-700">Tags</Label>
+                                    <Label className="text-orange-700">Tag</Label>
                                     <TagInput
                                         tags={data.tags}
                                         onTagsChange={handleTagsChange}
@@ -262,7 +262,7 @@ export default function Edit({ project, auth }: Props) {
                                             htmlFor="is_template"
                                             className="text-sm font-normal"
                                         >
-                                            Save as template
+                                            Simpan sebagai template
                                         </Label>
                                     </div>
                                 </div>
@@ -275,11 +275,11 @@ export default function Edit({ project, auth }: Props) {
                                             project.id
                                         )}
                                     >
-                                        Cancel
+                                        Batal
                                     </Link>
                                 </Button>
                                 <Button type="submit" disabled={processing} className="bg-orange-600 hover:bg-orange-700 text-white font-bold">
-                                    {processing ? "Saving..." : "Save Changes"}
+                                    {processing ? "Menyimpan..." : "Simpan Perubahan"}
                                 </Button>
                             </CardFooter>
                         </form>

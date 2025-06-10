@@ -18,7 +18,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { router, usePage } from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Textarea } from "../ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -121,7 +121,7 @@ export function TaskAttachments({
     const handleFileUpload = () => {
         if (!data.file) return;
         if (isNewTask) {
-            toast.error("Please save the task first before uploading files");
+            toast.error("Silakan simpan tugas terlebih dahulu sebelum mengunggah file");
             return;
         }
 
@@ -132,7 +132,7 @@ export function TaskAttachments({
                 if (props.task?.attachments) {
                     setLocalAttachments(props.task.attachments);
                 }
-                toast.success("File uploaded successfully");
+                toast.success("File berhasil diunggah");
                 setData("file", null);
                 const fileInput = document.querySelector(
                     'input[type="file"]'
@@ -140,14 +140,14 @@ export function TaskAttachments({
                 if (fileInput) fileInput.value = "";
             },
             onError: () => {
-                toast.error("Failed to upload file");
+                toast.error("Gagal mengunggah file");
             },
         });
     };
 
     const handleDelete = (attachmentId: number) => {
         if (isNewTask) return;
-        if (!confirm("Are you sure you want to delete this file?")) return;
+        if (!confirm("Apakah Anda yakin ingin menghapus file ini?")) return;
 
         router.delete(
             route("tasks.attachments.destroy", [taskId, attachmentId]),
@@ -156,10 +156,10 @@ export function TaskAttachments({
                     setLocalAttachments((prev) =>
                         prev.filter((att) => att.id !== attachmentId)
                     );
-                    toast.success("File deleted successfully");
+                    toast.success("File berhasil dihapus");
                 },
                 onError: () => {
-                    toast.error("Failed to delete file");
+                    toast.error("Gagal menghapus file");
                 },
             }
         );
@@ -183,7 +183,7 @@ export function TaskAttachments({
         e.preventDefault();
         if (!selectedAttachment) return;
         if (isNewTask) {
-            toast.error("Please save the task first before adding comments");
+            toast.error("Silakan simpan tugas terlebih dahulu sebelum menambah komentar");
             return;
         }
 
@@ -194,11 +194,11 @@ export function TaskAttachments({
             ]),
             {
                 onSuccess: () => {
-                    toast.success("Comment added successfully");
+                    toast.success("Komentar berhasil ditambahkan");
                     commentForm.setData("content", "");
                 },
                 onError: () => {
-                    toast.error("Failed to add comment");
+                    toast.error("Gagal menambah komentar");
                 },
             }
         );
@@ -207,7 +207,7 @@ export function TaskAttachments({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Task Attachments</CardTitle>
+                <CardTitle>Lampiran Tugas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="space-y-4">
@@ -215,7 +215,7 @@ export function TaskAttachments({
                         <input
                             type="file"
                             onChange={handleFileChange}
-                            className="flex-1 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+                            className="flex-1 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
                             accept="*/*"
                         />
                         {!isNewTask && (
@@ -224,14 +224,14 @@ export function TaskAttachments({
                                 onClick={handleFileUpload}
                                 disabled={processing || !data.file}
                             >
-                                {processing ? "Uploading..." : "Upload"}
+                                {processing ? "Mengunggah..." : "Unggah"}
                             </Button>
                         )}
                     </div>
                     {isNewTask && (
                         <div className="space-y-2">
                             <p className="text-sm text-yellow-600">
-                                Files will be uploaded after saving the task
+                                File akan diunggah setelah tugas disimpan
                             </p>
                         </div>
                     )}
@@ -241,11 +241,11 @@ export function TaskAttachments({
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>File</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Uploaded</TableHead>
+                                <TableHead>Berkas</TableHead>
+                                <TableHead>Tipe</TableHead>
+                                <TableHead>Diunggah</TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    Aksi
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -289,7 +289,7 @@ export function TaskAttachments({
                                         {attachment.uploaded_at
                                             ? new Date(
                                                   attachment.uploaded_at
-                                              ).toLocaleDateString("en-US", {
+                                              ).toLocaleDateString("id-ID", {
                                                   year: "numeric",
                                                   month: "long",
                                                   day: "numeric",
@@ -298,7 +298,7 @@ export function TaskAttachments({
                                               })
                                             : new Date(
                                                   attachment.created_at
-                                              ).toLocaleDateString("en-US", {
+                                              ).toLocaleDateString("id-ID", {
                                                   year: "numeric",
                                                   month: "long",
                                                   day: "numeric",
@@ -374,7 +374,7 @@ export function TaskAttachments({
                     </Table>
                 ) : (
                     <p className="text-center text-gray-500">
-                        No attachments yet
+                        Belum ada lampiran
                     </p>
                 )}
             </CardContent>
@@ -385,13 +385,13 @@ export function TaskAttachments({
             >
                 <DialogContent className="max-w-4xl">
                     <DialogHeader>
-                        <DialogTitle>Image Preview</DialogTitle>
+                        <DialogTitle>Pratinjau Gambar</DialogTitle>
                     </DialogHeader>
                     {previewImage && (
                         <>
                             <div className="p-4 bg-gray-100 rounded-lg mb-4">
                                 <p className="text-sm text-gray-600 break-all">
-                                    Image URL: {previewImage}
+                                    URL Gambar: {previewImage}
                                 </p>
                             </div>
                             <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
@@ -401,11 +401,11 @@ export function TaskAttachments({
                                     className="w-full h-full object-contain"
                                     onError={(e) => {
                                         console.error(
-                                            "Image failed to load:",
+                                            "Gagal memuat gambar:",
                                             previewImage
                                         );
                                         e.currentTarget.src =
-                                            "https://via.placeholder.com/400x300?text=Image+Failed+to+Load";
+                                            "https://via.placeholder.com/400x300?text=Gagal+Memuat+Gambar";
                                     }}
                                 />
                             </div>
@@ -416,13 +416,13 @@ export function TaskAttachments({
                                         window.open(previewImage, "_blank")
                                     }
                                 >
-                                    Open in New Tab
+                                    Buka di Tab Baru
                                 </Button>
                                 <Button
                                     variant="outline"
                                     onClick={() => setPreviewImage(null)}
                                 >
-                                    Close
+                                    Tutup
                                 </Button>
                             </div>
                         </>
@@ -436,7 +436,7 @@ export function TaskAttachments({
             >
                 <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle>Comments</DialogTitle>
+                        <DialogTitle>Komentar</DialogTitle>
                     </DialogHeader>
                     {selectedAttachment && (
                         <div className="space-y-4">
@@ -466,7 +466,7 @@ export function TaskAttachments({
                                                 <span className="text-sm text-gray-500">
                                                     {new Date(
                                                         comment.created_at
-                                                    ).toLocaleString()}
+                                                    ).toLocaleString("id-ID")}
                                                 </span>
                                             </div>
                                             <p className="text-sm text-gray-700 mt-1">
@@ -478,7 +478,7 @@ export function TaskAttachments({
                             </div>
                             <div className="space-y-2">
                                 <Textarea
-                                    placeholder="Add a comment..."
+                                    placeholder="Tambah komentar..."
                                     value={commentForm.data.content}
                                     onChange={(e) =>
                                         commentForm.setData(
@@ -498,8 +498,8 @@ export function TaskAttachments({
                                         }
                                     >
                                         {commentForm.processing
-                                            ? "Posting..."
-                                            : "Post Comment"}
+                                            ? "Mengirim..."
+                                            : "Kirim Komentar"}
                                     </Button>
                                 </div>
                             </div>

@@ -73,13 +73,13 @@ export default function Create({ auth, users, projects }: Props) {
         if (newDate) {
             if (projectStartDate && newDate < projectStartDate) {
                 setDateError(
-                    `Due date cannot be before project start date (${projectStartDate.toLocaleDateString()})`
+                    `Tanggal jatuh tempo tidak boleh sebelum tanggal mulai proyek (${projectStartDate.toLocaleDateString()})`
                 );
                 return;
             }
             if (projectEndDate && newDate > projectEndDate) {
                 setDateError(
-                    `Due date cannot be after project end date (${projectEndDate.toLocaleDateString()})`
+                    `Tanggal jatuh tempo tidak boleh setelah tanggal selesai proyek (${projectEndDate.toLocaleDateString()})`
                 );
                 return;
             }
@@ -99,7 +99,7 @@ export default function Create({ auth, users, projects }: Props) {
                     setDate(undefined);
                     setData("due_date", "");
                     setDateError(
-                        "Please select a new due date within the project timeline"
+                        "Silakan pilih tanggal jatuh tempo baru yang sesuai dengan rentang waktu proyek"
                     );
                 }
             }
@@ -112,22 +112,22 @@ export default function Create({ auth, users, projects }: Props) {
             return;
         }
         if (!data.project_id) {
-            setDateError("Please select a project first");
+            setDateError("Silakan pilih proyek terlebih dahulu");
             return;
         }
         if (!date) {
-            setDateError("Please select a due date");
+            setDateError("Silakan pilih tanggal jatuh tempo");
             return;
         }
 
         post(route("tasks.store"), {
             onSuccess: () => {
-                toast.success("Task created successfully");
+                toast.success("Tugas berhasil dibuat");
                 reset();
                 router.visit(route("tasks.index"));
             },
             onError: (errors) => {
-                toast.error("Failed to create task");
+                toast.error("Gagal membuat tugas");
                 console.error("Task creation errors:", errors);
             },
         });
@@ -135,7 +135,7 @@ export default function Create({ auth, users, projects }: Props) {
 
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="Create Task" />
+            <Head title="Buat Tugas" />
 
             <div
                 className="py-12 min-h-screen"
@@ -152,11 +152,11 @@ export default function Create({ auth, users, projects }: Props) {
                         >
                             <Link href="/tasks">
                                 <ArrowLeft className="mr-2 h-4 w-4" />
-                                Back to Tasks
+                                Kembali ke Daftar Tugas
                             </Link>
                         </Button>
                         <h1 className="text-3xl font-bold text-white drop-shadow-lg">
-                            Create Task
+                            Buat Tugas
                         </h1>
                     </div>
 
@@ -164,10 +164,10 @@ export default function Create({ auth, users, projects }: Props) {
                         <form onSubmit={handleSubmit}>
                             <CardHeader>
                                 <CardTitle className="text-orange-700">
-                                    Task Details
+                                    Detail Tugas
                                 </CardTitle>
                                 <CardDescription className="text-orange-500">
-                                    Fill in the task details below.
+                                    Isi detail tugas di bawah ini.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
@@ -176,7 +176,7 @@ export default function Create({ auth, users, projects }: Props) {
                                         htmlFor="title"
                                         className="text-orange-700 font-semibold"
                                     >
-                                        Task Title
+                                        Judul Tugas
                                     </Label>
                                     <Input
                                         id="title"
@@ -186,6 +186,7 @@ export default function Create({ auth, users, projects }: Props) {
                                         }
                                         required
                                         className="focus:border-orange-400"
+                                        placeholder="Masukkan judul tugas"
                                     />
                                     {errors.title && (
                                         <p className="text-sm text-red-500">
@@ -199,7 +200,7 @@ export default function Create({ auth, users, projects }: Props) {
                                         htmlFor="description"
                                         className="text-orange-700 font-semibold"
                                     >
-                                        Description
+                                        Deskripsi
                                     </Label>
                                     <Textarea
                                         id="description"
@@ -212,6 +213,7 @@ export default function Create({ auth, users, projects }: Props) {
                                         }
                                         required
                                         className="focus:border-orange-400"
+                                        placeholder="Masukkan deskripsi tugas"
                                     />
                                     {errors.description && (
                                         <p className="text-sm text-red-500">
@@ -225,14 +227,14 @@ export default function Create({ auth, users, projects }: Props) {
                                         htmlFor="project_id"
                                         className="text-orange-700 font-semibold"
                                     >
-                                        Project
+                                        Proyek
                                     </Label>
                                     <Select
                                         value={data.project_id}
                                         onValueChange={handleProjectChange}
                                     >
                                         <SelectTrigger className="focus:border-orange-400">
-                                            <SelectValue placeholder="Select a project" />
+                                            <SelectValue placeholder="Pilih proyek" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {projects.map((project) => (
@@ -257,7 +259,7 @@ export default function Create({ auth, users, projects }: Props) {
                                         htmlFor="assigned_to"
                                         className="text-orange-700 font-semibold"
                                     >
-                                        Assign To
+                                        Tugaskan Kepada
                                     </Label>
                                     <Select
                                         value={data.assigned_to}
@@ -266,7 +268,7 @@ export default function Create({ auth, users, projects }: Props) {
                                         }
                                     >
                                         <SelectTrigger className="focus:border-orange-400">
-                                            <SelectValue placeholder="Select a user" />
+                                            <SelectValue placeholder="Pilih pengguna" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {users.map((user) => (
@@ -303,17 +305,17 @@ export default function Create({ auth, users, projects }: Props) {
                                         ) => setData("status", value)}
                                     >
                                         <SelectTrigger className="focus:border-orange-400">
-                                            <SelectValue placeholder="Select status" />
+                                            <SelectValue placeholder="Pilih status" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="todo">
-                                                To Do
+                                                Belum Dikerjakan
                                             </SelectItem>
                                             <SelectItem value="in_progress">
-                                                In Progress
+                                                Sedang Dikerjakan
                                             </SelectItem>
                                             <SelectItem value="completed">
-                                                Completed
+                                                Selesai
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -326,7 +328,7 @@ export default function Create({ auth, users, projects }: Props) {
 
                                 <div className="space-y-2">
                                     <Label className="text-orange-700 font-semibold">
-                                        Due Date
+                                        Tanggal Jatuh Tempo
                                     </Label>
                                     <DatePicker
                                         date={date}
@@ -361,14 +363,14 @@ export default function Create({ auth, users, projects }: Props) {
                                     asChild
                                     className="border-orange-400 text-orange-700 hover:bg-orange-50"
                                 >
-                                    <Link href="/tasks">Cancel</Link>
+                                    <Link href="/tasks">Batal</Link>
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={processing || !!dateError}
                                     className="bg-gradient-to-r from-orange-400 to-orange-600 text-white font-semibold hover:from-orange-500 hover:to-orange-700"
                                 >
-                                    {processing ? "Creating..." : "Create Task"}
+                                    {processing ? "Membuat..." : "Buat Tugas"}
                                 </Button>
                             </CardFooter>
                         </form>

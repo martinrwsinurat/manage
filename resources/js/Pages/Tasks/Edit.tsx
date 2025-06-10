@@ -92,13 +92,13 @@ export default function Edit({ auth, task, users, projects }: Props) {
         if (newDate) {
             if (projectStartDate && newDate < projectStartDate) {
                 setDateError(
-                    `Due date cannot be before project start date (${projectStartDate.toLocaleDateString()})`
+                    `Tanggal jatuh tempo tidak boleh sebelum tanggal mulai proyek (${projectStartDate.toLocaleDateString()})`
                 );
                 return;
             }
             if (projectEndDate && newDate > projectEndDate) {
                 setDateError(
-                    `Due date cannot be after project end date (${projectEndDate.toLocaleDateString()})`
+                    `Tanggal jatuh tempo tidak boleh setelah tanggal selesai proyek (${projectEndDate.toLocaleDateString()})`
                 );
                 return;
             }
@@ -118,7 +118,7 @@ export default function Edit({ auth, task, users, projects }: Props) {
                     setDate(undefined);
                     setData("due_date", "");
                     setDateError(
-                        "Please select a new due date within the project timeline"
+                        "Silakan pilih tanggal jatuh tempo baru sesuai rentang proyek"
                     );
                 }
             }
@@ -135,7 +135,7 @@ export default function Edit({ auth, task, users, projects }: Props) {
 
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="Edit Task" />
+            <Head title="Edit Tugas" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -143,23 +143,23 @@ export default function Edit({ auth, task, users, projects }: Props) {
                         <Button variant="ghost" asChild className="mb-4">
                             <Link href="/tasks">
                                 <ArrowLeft className="mr-2 h-4 w-4" />
-                                Back to Tasks
+                                Kembali ke Daftar Tugas
                             </Link>
                         </Button>
-                        <h1 className="text-2xl font-semibold">Edit Task</h1>
+                        <h1 className="text-2xl font-semibold">Edit Tugas</h1>
                     </div>
 
                     <Card>
                         <form onSubmit={handleSubmit}>
                             <CardHeader>
-                                <CardTitle>Task Details</CardTitle>
+                                <CardTitle>Detail Tugas</CardTitle>
                                 <CardDescription>
-                                    Update the task details below.
+                                    Perbarui detail tugas di bawah ini.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="title">Task Title</Label>
+                                    <Label htmlFor="title">Judul Tugas</Label>
                                     <Input
                                         id="title"
                                         value={data.title}
@@ -177,7 +177,7 @@ export default function Edit({ auth, task, users, projects }: Props) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="description">
-                                        Description
+                                        Deskripsi
                                     </Label>
                                     <Textarea
                                         id="description"
@@ -198,13 +198,13 @@ export default function Edit({ auth, task, users, projects }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="project_id">Project</Label>
+                                    <Label htmlFor="project_id">Proyek</Label>
                                     <Select
                                         value={data.project_id}
                                         onValueChange={handleProjectChange}
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select a project" />
+                                            <SelectValue placeholder="Pilih proyek" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {projects.map((project) => (
@@ -226,7 +226,7 @@ export default function Edit({ auth, task, users, projects }: Props) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="assigned_to">
-                                        Assign To
+                                        Ditugaskan Kepada
                                     </Label>
                                     <Select
                                         value={data.assigned_to}
@@ -235,7 +235,7 @@ export default function Edit({ auth, task, users, projects }: Props) {
                                         }
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select a user" />
+                                            <SelectValue placeholder="Pilih pengguna" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {users.map((user) => (
@@ -267,17 +267,17 @@ export default function Edit({ auth, task, users, projects }: Props) {
                                         ) => setData("status", value)}
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select status" />
+                                            <SelectValue placeholder="Pilih status" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="todo">
-                                                To Do
+                                                Belum Dikerjakan
                                             </SelectItem>
                                             <SelectItem value="in_progress">
-                                                In Progress
+                                                Sedang Dikerjakan
                                             </SelectItem>
                                             <SelectItem value="completed">
-                                                Completed
+                                                Selesai
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -289,7 +289,7 @@ export default function Edit({ auth, task, users, projects }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Due Date</Label>
+                                    <Label>Tanggal Jatuh Tempo</Label>
                                     <DatePicker
                                         date={date}
                                         onDateChange={handleDateChange}
@@ -311,13 +311,13 @@ export default function Edit({ auth, task, users, projects }: Props) {
                             </CardContent>
                             <CardFooter className="flex justify-end space-x-4">
                                 <Button variant="outline" asChild>
-                                    <Link href="/tasks">Cancel</Link>
+                                    <Link href="/tasks">Batal</Link>
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={processing || !!dateError}
                                 >
-                                    {processing ? "Saving..." : "Save Changes"}
+                                    {processing ? "Menyimpan..." : "Simpan Perubahan"}
                                 </Button>
                             </CardFooter>
                         </form>
