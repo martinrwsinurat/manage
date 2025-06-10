@@ -1,6 +1,6 @@
 import { Head, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Components/ui/button";
 import {
     Card,
     CardContent,
@@ -8,8 +8,8 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+} from "@/Components/ui/card";
+import { Progress } from "@/Components/ui/progress";
 import { User } from "@/types";
 import { formatDate } from "@/lib/utils";
 import { Users, Calendar } from "lucide-react";
@@ -42,26 +42,27 @@ interface Props {
 
 export default function Index({ auth, projects }: Props) {
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Projects
-                </h2>
-            }
-        >
+        <AuthenticatedLayout>
             <Head title="Projects" />
 
-            <div className="py-12">
+            <div className="py-12 bg-orange-50 min-h-screen">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div className="mb-8">
+                        <h2 className="text-3xl font-bold leading-tight text-orange-800 mb-2">
+                            Projek
+                        </h2>
+                        <p className="text-orange-600">Tuangkan idemu dalam projek</p>
+                    </div>
+                    
                     <div className="mb-6 flex justify-between items-center">
-                        <h1 className="text-2xl font-semibold">My Projects</h1>
-                        <Button asChild>
-                            <Link href="/projects/create">Create Project</Link>
+                        <h1 className="text-2xl font-semibold text-orange-900">TUGAS SAYA</h1>
+                        <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white">
+                            <Link href="/projects/create">Buat projek</Link>
                         </Button>
                     </div>
 
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {/* Ubah grid agar card lebih lebar */}
+                    <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
                         {projects.map((project) => {
                             const completedTasks = project.tasks.filter(
                                 (task) => task.status === "completed"
@@ -76,24 +77,24 @@ export default function Index({ auth, projects }: Props) {
                                     : 0;
 
                             return (
-                                <Card key={project.id}>
-                                    <CardHeader>
-                                        <CardTitle>{project.name}</CardTitle>
-                                        <CardDescription>
+                                <Card key={project.id} className="border-orange-200 shadow-lg hover:shadow-xl transition-shadow bg-white">
+                                    <CardHeader className="bg-gradient-to-r from-orange-100 to-orange-200">
+                                        <CardTitle className="text-orange-900">{project.name}</CardTitle>
+                                        <CardDescription className="text-orange-700">
                                             {project.description}
                                         </CardDescription>
                                     </CardHeader>
-                                    <CardContent>
+                                    <CardContent className="pt-6">
                                         <div className="space-y-4">
                                             <div>
-                                                <h3 className="text-sm font-medium">
+                                                <h3 className="text-sm font-medium text-orange-800">
                                                     Progress
                                                 </h3>
                                                 <Progress
                                                     value={progress}
-                                                    className="w-full"
+                                                    className="w-full [&>div]:bg-orange-500"
                                                 />
-                                                <p className="text-sm text-gray-600 mt-1">
+                                                <p className="text-sm text-orange-600 mt-1">
                                                     {progress}% Complete (
                                                     {completedTasks} of{" "}
                                                     {project.tasks.length}{" "}
@@ -101,9 +102,9 @@ export default function Index({ auth, projects }: Props) {
                                                 </p>
                                             </div>
 
-                                            <div className="flex items-center space-x-4 text-sm text-gray-600">
+                                            <div className="flex items-center space-x-4 text-sm text-orange-600">
                                                 <div className="flex items-center">
-                                                    <Calendar className="w-4 h-4 mr-1" />
+                                                    <Calendar className="w-4 h-4 mr-1 text-orange-500" />
                                                     <span>
                                                         {formatDate(
                                                             project.start_date
@@ -115,7 +116,7 @@ export default function Index({ auth, projects }: Props) {
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center">
-                                                    <Users className="w-4 h-4 mr-1" />
+                                                    <Users className="w-4 h-4 mr-1 text-orange-500" />
                                                     <span>
                                                         {
                                                             project.tasks.filter(
@@ -132,13 +133,13 @@ export default function Index({ auth, projects }: Props) {
                                     <CardFooter>
                                         <Button
                                             variant="outline"
-                                            className="w-full"
+                                            className="w-full border-orange-300 text-orange-700 hover:bg-orange-100 hover:border-orange-400"
                                             asChild
                                         >
                                             <Link
                                                 href={`/projects/${project.id}`}
                                             >
-                                                View Details
+                                                Detail projek
                                             </Link>
                                         </Button>
                                     </CardFooter>

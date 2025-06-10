@@ -38,7 +38,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
                             orientation="vertical"
                             className="mr-2 h-4"
                         />
-                        <Breadcrumb>
+                        {/* <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
                                     <BreadcrumbLink href="#">
@@ -52,7 +52,7 @@ export default function AuthenticatedLayout({ children }: PropsWithChildren) {
                                     </BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
-                        </Breadcrumb>
+                        </Breadcrumb> */}
                     </div>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
