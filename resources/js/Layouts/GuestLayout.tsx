@@ -11,7 +11,7 @@ export default function GuestLayout({ children }: Props) {
             <div>
                 <Link href="/">
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Task Management
+                        Soft Manage UI 
                     </h1>
                 </Link>
             </div>
