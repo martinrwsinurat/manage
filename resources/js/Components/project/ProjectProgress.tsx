@@ -33,12 +33,12 @@ export function ProjectProgress({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Project Progress</CardTitle>
+                <CardTitle>Perkembangan</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                        <span>Progress</span>
+                        <span>capaian</span>
                         <span>{progress}%</span>
                     </div>
                     <Progress value={progress} className="h-2" />
@@ -54,7 +54,7 @@ export function ProjectProgress({
                     <div className="text-right">
                         <p className="text-sm font-medium">Tasks</p>
                         <p className="text-sm text-gray-500">
-                            {completedTasks} of {totalTasks} completed
+                            {completedTasks} dari {totalTasks} selesai
                         </p>
                     </div>
                 </div>

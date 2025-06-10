@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useForm } from "@inertiajs/react";
@@ -44,20 +44,18 @@ export function ProjectAttachments({
     const { data, setData, post, processing } = useForm({
         file: null as File | null,
     });
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Update local attachments when props change
     useEffect(() => {
         setLocalAttachments(attachments || []);
     }, [attachments]);
 
-    // Function to get full Cloudinary URL
     const getFullCloudinaryUrl = (path: string) => {
         if (path.startsWith("http")) return path;
-        const cloudName = window.CLOUDINARY_CLOUD_NAME || "dtpflpunp"; // fallback to your cloud name
+        const cloudName = window.CLOUDINARY_CLOUD_NAME || "dtpflpunp";
         return `https://res.cloudinary.com/${cloudName}/image/upload/${path}`;
     };
 
-    // Function to transform Cloudinary URL for thumbnails
     const getThumbnailUrl = (url: string) => {
         const fullUrl = getFullCloudinaryUrl(url);
         if (!fullUrl.includes("cloudinary.com")) return fullUrl;
@@ -67,7 +65,6 @@ export function ProjectAttachments({
         );
     };
 
-    // Function to transform Cloudinary URL for preview
     const getPreviewUrl = (url: string) => {
         const fullUrl = getFullCloudinaryUrl(url);
         if (!fullUrl.includes("cloudinary.com")) return fullUrl;
@@ -77,9 +74,8 @@ export function ProjectAttachments({
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            // Validate file size (10MB max)
             if (file.size > 10 * 1024 * 1024) {
-                toast.error("File size must be less than 10MB");
+                toast.error("Ukuran file harus kurang dari 10MB");
                 e.target.value = "";
                 return;
             }
@@ -91,53 +87,36 @@ export function ProjectAttachments({
         e.preventDefault();
         if (!data.file) return;
 
-        console.log("Starting file upload...", {
-            file: data.file.name,
-            size: data.file.size,
-            type: data.file.type,
-        });
-
         post(route("projects.attachments.store", projectId), {
             forceFormData: true,
             preserveScroll: true,
             onSuccess: (page) => {
-                console.log("Upload response:", page);
                 const props = page.props as PageProps;
                 if (props.project?.attachments) {
-                    console.log(
-                        "Updating attachments:",
-                        props.project.attachments
-                    );
                     setLocalAttachments(props.project.attachments);
-                    toast.success("File uploaded successfully");
+                    toast.success("Berkas berhasil diunggah");
                     setData("file", null);
-                    // Reset file input
-                    const fileInput = document.querySelector(
-                        'input[type="file"]'
-                    ) as HTMLInputElement;
-                    if (fileInput) fileInput.value = "";
+                    if (fileInputRef.current) fileInputRef.current.value = "";
                 } else {
-                    console.warn("No attachments in response:", props);
-                    toast.error("Failed to update attachments list");
+                    toast.error("Gagal memperbarui daftar berkas");
                 }
             },
             onError: (errors) => {
-                console.error("Upload failed:", errors);
-                toast.error(errors.file || "Failed to upload file");
+                toast.error(errors.file || "Gagal mengunggah berkas");
             },
         });
     };
 
     const handleDelete = (index: number) => {
-        if (confirm("Are you sure you want to delete this file?")) {
+        if (confirm("Yakin ingin menghapus berkas ini?")) {
             router.delete(
                 route("projects.attachments.destroy", [projectId, index]),
                 {
                     onSuccess: () => {
-                        toast.success("File deleted successfully");
+                        toast.success("Berkas berhasil dihapus");
                     },
                     onError: () => {
-                        toast.error("Failed to delete file");
+                        toast.error("Gagal menghapus berkas");
                     },
                 }
             );
@@ -145,36 +124,45 @@ export function ProjectAttachments({
     };
 
     const handleDownload = (path: string, filename: string) => {
-        // Cloudinary URLs are already complete URLs
         window.open(path, "_blank");
     };
 
     const handlePreview = (path: string) => {
         const fullUrl = getFullCloudinaryUrl(path);
-        console.log("Original path:", path);
-        console.log("Full Cloudinary URL:", fullUrl);
         setPreviewImage(fullUrl);
     };
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Project Attachments</CardTitle>
+                <CardTitle>Bukti Tugas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="flex items-center gap-4">
                         <input
                             type="file"
+                            ref={fileInputRef}
                             onChange={handleFileChange}
-                            className="flex-1 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+                            className="hidden"
                             accept="*/*"
+                            id="fileInput"
                         />
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => fileInputRef.current?.click()}
+                        >
+                            Pilih Berkas
+                        </Button>
+                        <span className="ml-2 text-sm text-gray-600">
+                            {data.file ? data.file.name : "Belum ada berkas dipilih"}
+                        </span>
                         <Button
                             type="submit"
                             disabled={processing || !data.file}
                         >
-                            {processing ? "Uploading..." : "Upload"}
+                            {processing ? "Mengunggah..." : "Unggah"}
                         </Button>
                     </div>
                 </form>
@@ -184,10 +172,10 @@ export function ProjectAttachments({
                         <TableHeader>
                             <TableRow>
                                 <TableHead>File</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Uploaded</TableHead>
+                                <TableHead>Tipe</TableHead>
+                                <TableHead>Diunggah</TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    Aksi
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
@@ -280,7 +268,7 @@ export function ProjectAttachments({
                     </Table>
                 ) : (
                     <p className="text-center text-gray-500">
-                        No attachments yet
+                        Belum ada bukti tugas yang diunggah
                     </p>
                 )}
             </CardContent>
@@ -291,13 +279,13 @@ export function ProjectAttachments({
             >
                 <DialogContent className="max-w-4xl">
                     <DialogHeader>
-                        <DialogTitle>Image Preview</DialogTitle>
+                        <DialogTitle>Pratinjau Gambar</DialogTitle>
                     </DialogHeader>
                     {previewImage && (
                         <>
                             <div className="p-4 bg-gray-100 rounded-lg mb-4">
                                 <p className="text-sm text-gray-600 break-all">
-                                    Image URL: {previewImage}
+                                    URL Gambar: {previewImage}
                                 </p>
                             </div>
                             <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
@@ -306,10 +294,6 @@ export function ProjectAttachments({
                                     alt="Preview"
                                     className="w-full h-full object-contain"
                                     onError={(e) => {
-                                        console.error(
-                                            "Image failed to load:",
-                                            previewImage
-                                        );
                                         e.currentTarget.src =
                                             "https://via.placeholder.com/400x300?text=Image+Failed+to+Load";
                                     }}
@@ -322,13 +306,13 @@ export function ProjectAttachments({
                                         window.open(previewImage, "_blank")
                                     }
                                 >
-                                    Open in New Tab
+                                    Buka di Tab Baru
                                 </Button>
                                 <Button
                                     variant="outline"
                                     onClick={() => setPreviewImage(null)}
                                 >
-                                    Close
+                                    Tutup
                                 </Button>
                             </div>
                         </>

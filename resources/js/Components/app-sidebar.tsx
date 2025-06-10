@@ -19,14 +19,14 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar";
 
-// Warna custom sesuai dashboard baru
-const sidebarBg = "bg-[#23282d]";
-const sidebarActive = "bg-[#FF7300] text-white font-semibold";
-const sidebarHover = "hover:bg-[#FFE3C6] hover:text-[#B05A00]";
-const sidebarText = "text-[#b05a00]";
-const sidebarSubHover = "hover:bg-[#FFF6ED] text-[#B05A00]";
-const sidebarSubText = "text-[#B05A00]";
-const sidebarSection = "text-[#B05A00]";
+// Warna baru yang lebih nyaman dan modern
+const sidebarBg = "bg-slate-50 border-r border-slate-200";
+const sidebarActive = "bg-blue-500 text-white font-medium";
+const sidebarHover = "hover:bg-blue-50 hover:text-blue-700";
+const sidebarText = "text-slate-700";
+const sidebarSubHover = "hover:bg-slate-100 text-slate-600";
+const sidebarSubText = "text-slate-600";
+const sidebarSection = "text-slate-500";
 
 const data = {
     user: {
@@ -106,39 +106,28 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    // Fungsi logout yang benar: POST ke /logout lalu redirect ke /login
-    const handleLogout = async () => {
-        await fetch('/logout', {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
-            },
-        });
-        window.location.href = "/login";
-    };
-
     return (
         <Sidebar
             collapsible="icon"
-            className={`${sidebarBg} min-h-screen`}
+            className={`${sidebarBg} min-h-screen w-56`} // Lebar diperkecil dari default
             {...props}
         >
-            <SidebarHeader>
-                {/* User info */}
-                <div className="flex items-center gap-3 py-4 px-2">
+            <SidebarHeader className="py-3">
+                {/* User info - diperkecil */}
+                <div className="flex items-center gap-2 px-3">
                     <img
                         src={data.user.avatar}
                         alt={data.user.name}
-                        className="w-10 h-10 rounded-full object-cover border-2 border-white"
+                        className="w-8 h-8 rounded-full object-cover border border-slate-300"
                     />
-                    <div>
-                        <div className={`font-semibold ${sidebarText}`}>{data.user.name}</div>
-                        <div className="text-xs text-white/80">{data.user.email}</div>
+                    <div className="flex-1 min-w-0">
+                        <div className={`font-medium text-sm ${sidebarText} truncate`}>{data.user.name}</div>
+                        <div className="text-xs text-slate-500 truncate">{data.user.email}</div>
                     </div>
                 </div>
             </SidebarHeader>
-            <SidebarContent>
+            
+            <SidebarContent className="px-2">
                 {/* Main Navigation */}
                 <nav>
                     <ul className="space-y-1">
@@ -146,7 +135,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             <li key={item.title}>
                                 <a
                                     href={item.url}
-                                    className={`flex items-center gap-3 px-4 py-2 rounded-l-lg transition-colors
+                                    className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm
                                         ${
                                             item.isActive
                                                 ? sidebarActive
@@ -154,17 +143,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                         }
                                     `}
                                 >
-                                    {item.icon && <item.icon className="w-5 h-5" />}
-                                    <span>{item.title}</span>
+                                    {item.icon && <item.icon className="w-4 h-4 flex-shrink-0" />}
+                                    <span className="truncate">{item.title}</span>
                                 </a>
                                 {/* Submenu */}
                                 {item.items && (
-                                    <ul className="ml-8 mt-1 space-y-1">
+                                    <ul className="ml-6 mt-1 space-y-1">
                                         {item.items.map((sub) => (
                                             <li key={sub.title}>
                                                 <a
                                                     href={sub.url}
-                                                    className={`block px-4 py-1 text-sm rounded ${sidebarSubHover} ${sidebarSubText}`}
+                                                    className={`block px-3 py-1.5 text-xs rounded-md ${sidebarSubHover} ${sidebarSubText} truncate`}
                                                 >
                                                     {sub.title}
                                                 </a>
@@ -176,9 +165,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         ))}
                     </ul>
                 </nav>
+                
                 {/* Projects Section */}
                 <div className="mt-6">
-                    <div className={`px-4 py-2 text-xs font-bold uppercase tracking-wider ${sidebarSection}`}>
+                    <div className={`px-3 py-2 text-xs font-semibold uppercase tracking-wider ${sidebarSection}`}>
                         Projek
                     </div>
                     <ul className="space-y-1">
@@ -186,25 +176,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             <li key={project.name}>
                                 <a
                                     href={project.url}
-                                    className={`flex items-center gap-3 px-4 py-2 rounded-l-lg ${sidebarHover} ${sidebarText} transition-colors`}
+                                    className={`flex items-center gap-2 px-3 py-2 rounded-lg ${sidebarHover} ${sidebarText} transition-colors text-sm`}
                                 >
-                                    {project.icon && <project.icon className="w-4 h-4" />}
-                                    <span>{project.name}</span>
+                                    {project.icon && <project.icon className="w-4 h-4 flex-shrink-0" />}
+                                    <span className="truncate">{project.name}</span>
                                 </a>
                             </li>
                         ))}
                     </ul>
                 </div>
             </SidebarContent>
-            {/* Logout Button */}
-            <div className="p-4 mt-auto">
-                <button
-                    onClick={handleLogout}
-                    className="w-full py-2 px-4 rounded bg-[#FF7300] text-white font-semibold hover:bg-[#FF8C1A] transition"
-                >
-                    Keluar
-                </button>
-            </div>
+            
+            {/* Tombol Keluar dihapus */}
+            
             <SidebarRail />
         </Sidebar>
     );

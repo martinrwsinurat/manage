@@ -47,21 +47,21 @@ export function ProjectTags({ tags, projectId }: ProjectTagsProps) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Project Tags</CardTitle>
+                <CardTitle>komentar Tag</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <form onSubmit={handleSubmit} className="flex gap-2">
                     <Input
                         value={data.tag}
                         onChange={(e) => setData("tag", e.target.value)}
-                        placeholder="Add a tag"
+                        placeholder="beri komentar"
                         className="flex-1"
                     />
                     <Button
                         type="submit"
                         disabled={processing || !data.tag.trim()}
                     >
-                        Add
+                        done
                     </Button>
                 </form>
 
@@ -85,7 +85,7 @@ export function ProjectTags({ tags, projectId }: ProjectTagsProps) {
                             </Badge>
                         ))
                     ) : (
-                        <p className="text-sm text-gray-500">No tags yet</p>
+                        <p className="text-sm text-gray-500">belum ada komentar projek</p>
                     )}
                 </div>
             </CardContent>

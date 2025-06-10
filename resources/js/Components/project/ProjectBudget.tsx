@@ -38,11 +38,11 @@ export function ProjectBudget({
     const percentage = budget ? (spentBudget / budget) * 100 : 0;
     const budgetStatus = budget
         ? percentage >= 100
-            ? "Over budget"
+            ? "kelebihan anggaran"
             : percentage >= 80
-            ? "Near budget limit"
-            : "Within budget"
-        : "No budget set";
+            ? "Hampir mencapai anggaran"
+            : "Anggaran aman"
+        : "belum ada anggaran";
 
     const statusColor =
         percentage >= 100
@@ -54,12 +54,12 @@ export function ProjectBudget({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Budget Overview</CardTitle>
+                <CardTitle>Anggaran Projek</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                        <span>Budget Status</span>
+                        <span>Status</span>
                         <span className={statusColor}>{budgetStatus}</span>
                     </div>
                     <Progress value={percentage} className="h-2" max={100} />
@@ -67,7 +67,7 @@ export function ProjectBudget({
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <p className="text-sm font-medium">Total Budget</p>
+                        <p className="text-sm font-medium">Total Anggaran</p>
                         <p className="text-2xl font-bold">
                             {budget
                                 ? new Intl.NumberFormat("id-ID", {
@@ -78,7 +78,7 @@ export function ProjectBudget({
                         </p>
                     </div>
                     <div>
-                        <p className="text-sm font-medium">Spent Budget</p>
+                        <p className="text-sm font-medium">Anggaran yang diberi</p>
                         <p className="text-2xl font-bold">
                             {new Intl.NumberFormat("id-ID", {
                                 style: "currency",
