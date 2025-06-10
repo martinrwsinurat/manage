@@ -137,29 +137,47 @@ export default function Create({ auth, users, projects }: Props) {
         <AuthenticatedLayout user={auth.user}>
             <Head title="Create Task" />
 
-            <div className="py-12">
+            <div
+                className="py-12 min-h-screen"
+                style={{
+                    background: "linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)",
+                }}
+            >
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="mb-6">
-                        <Button variant="ghost" asChild className="mb-4">
+                        <Button
+                            variant="ghost"
+                            asChild
+                            className="mb-4 bg-white/70 hover:bg-white/90 text-orange-700"
+                        >
                             <Link href="/tasks">
                                 <ArrowLeft className="mr-2 h-4 w-4" />
                                 Back to Tasks
                             </Link>
                         </Button>
-                        <h1 className="text-2xl font-semibold">Create Task</h1>
+                        <h1 className="text-3xl font-bold text-white drop-shadow-lg">
+                            Create Task
+                        </h1>
                     </div>
 
-                    <Card>
+                    <Card className="shadow-2xl border-0 bg-white/90">
                         <form onSubmit={handleSubmit}>
                             <CardHeader>
-                                <CardTitle>Task Details</CardTitle>
-                                <CardDescription>
+                                <CardTitle className="text-orange-700">
+                                    Task Details
+                                </CardTitle>
+                                <CardDescription className="text-orange-500">
                                     Fill in the task details below.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="title">Task Title</Label>
+                                    <Label
+                                        htmlFor="title"
+                                        className="text-orange-700 font-semibold"
+                                    >
+                                        Task Title
+                                    </Label>
                                     <Input
                                         id="title"
                                         value={data.title}
@@ -167,6 +185,7 @@ export default function Create({ auth, users, projects }: Props) {
                                             setData("title", e.target.value)
                                         }
                                         required
+                                        className="focus:border-orange-400"
                                     />
                                     {errors.title && (
                                         <p className="text-sm text-red-500">
@@ -176,7 +195,10 @@ export default function Create({ auth, users, projects }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="description">
+                                    <Label
+                                        htmlFor="description"
+                                        className="text-orange-700 font-semibold"
+                                    >
                                         Description
                                     </Label>
                                     <Textarea
@@ -189,6 +211,7 @@ export default function Create({ auth, users, projects }: Props) {
                                             )
                                         }
                                         required
+                                        className="focus:border-orange-400"
                                     />
                                     {errors.description && (
                                         <p className="text-sm text-red-500">
@@ -198,12 +221,17 @@ export default function Create({ auth, users, projects }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="project_id">Project</Label>
+                                    <Label
+                                        htmlFor="project_id"
+                                        className="text-orange-700 font-semibold"
+                                    >
+                                        Project
+                                    </Label>
                                     <Select
                                         value={data.project_id}
                                         onValueChange={handleProjectChange}
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger className="focus:border-orange-400">
                                             <SelectValue placeholder="Select a project" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -225,7 +253,10 @@ export default function Create({ auth, users, projects }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="assigned_to">
+                                    <Label
+                                        htmlFor="assigned_to"
+                                        className="text-orange-700 font-semibold"
+                                    >
                                         Assign To
                                     </Label>
                                     <Select
@@ -234,7 +265,7 @@ export default function Create({ auth, users, projects }: Props) {
                                             setData("assigned_to", value)
                                         }
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger className="focus:border-orange-400">
                                             <SelectValue placeholder="Select a user" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -256,7 +287,12 @@ export default function Create({ auth, users, projects }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="status">Status</Label>
+                                    <Label
+                                        htmlFor="status"
+                                        className="text-orange-700 font-semibold"
+                                    >
+                                        Status
+                                    </Label>
                                     <Select
                                         value={data.status}
                                         onValueChange={(
@@ -266,7 +302,7 @@ export default function Create({ auth, users, projects }: Props) {
                                                 | "completed"
                                         ) => setData("status", value)}
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger className="focus:border-orange-400">
                                             <SelectValue placeholder="Select status" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -289,7 +325,9 @@ export default function Create({ auth, users, projects }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Due Date</Label>
+                                    <Label className="text-orange-700 font-semibold">
+                                        Due Date
+                                    </Label>
                                     <DatePicker
                                         date={date}
                                         onDateChange={handleDateChange}
@@ -318,12 +356,17 @@ export default function Create({ auth, users, projects }: Props) {
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-end space-x-4">
-                                <Button variant="outline" asChild>
+                                <Button
+                                    variant="outline"
+                                    asChild
+                                    className="border-orange-400 text-orange-700 hover:bg-orange-50"
+                                >
                                     <Link href="/tasks">Cancel</Link>
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={processing || !!dateError}
+                                    className="bg-gradient-to-r from-orange-400 to-orange-600 text-white font-semibold hover:from-orange-500 hover:to-orange-700"
                                 >
                                     {processing ? "Creating..." : "Create Task"}
                                 </Button>

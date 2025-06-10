@@ -55,7 +55,12 @@ export default function Index({ auth, tasks }: Props) {
         >
             <Head title="Tasks" />
 
-            <div className="py-12">
+            <div
+                className="py-12 min-h-screen"
+                style={{
+                    background: "linear-gradient(135deg, #ff9800 0%, #ffb74d 100%)",
+                }}
+            >
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="mb-6 flex justify-between items-center">
                         <h1 className="text-2xl font-semibold">My Tasks</h1>

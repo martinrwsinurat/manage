@@ -59,128 +59,109 @@ export default function Show({ project, auth }: Props) {
         <AuthenticatedLayout user={auth.user}>
             <Head title={project.name} />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="mb-6">
-                        <Button variant="ghost" asChild className="mb-4">
-                            <Link href="/projects">
-                                <ArrowLeft className="mr-2 h-4 w-4" />
-                                Back to Projects
-                            </Link>
-                        </Button>
-                        <div className="flex justify-between items-center">
-                            <h1 className="text-2xl font-semibold">
-                                {project.name}
-                            </h1>
-                            <div className="flex gap-2">
-                                <Button
-                                    variant="outline"
-                                    onClick={handleDuplicateTemplate}
-                                >
-                                    Duplicate as Template
-                                </Button>
-                                <Button variant="outline" asChild>
-                                    <Link
-                                        href={route(
-                                            "projects.edit",
-                                            project.id
-                                        )}
-                                    >
-                                        Edit Project
-                                    </Link>
-                                </Button>
-                                <Button asChild>
-                                    <Link href={route("tasks.create")}>
-                                        <Plus className="mr-2 h-4 w-4" />
-                                        Add Task
-                                    </Link>
-                                </Button>
-                            </div>
+            <div className="min-h-screen bg-gradient-to-br from-orange-400 via-orange-500 to-orange-700 py-12">
+                <div className="max-w-6xl mx-auto px-4">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
+                        <div className="flex items-center gap-4 mb-4 md:mb-0">
+                            <Button variant="ghost" asChild className="bg-white/30 hover:bg-white/50 text-white">
+                                <Link href="/projects">
+                                    <ArrowLeft className="mr-2 h-4 w-4" />
+                                    <span className="font-semibold">Back</span>
+                                </Link>
+                            </Button>
+                            <h1 className="text-3xl font-bold text-white drop-shadow-lg">{project.name}</h1>
+                        </div>
+                        <div className="flex gap-2">
+                            <Button
+                                variant="outline"
+                                className="bg-white/30 hover:bg-white/50 text-white border-white"
+                                onClick={handleDuplicateTemplate}
+                            >
+                                Duplicate as Template
+                            </Button>
+                            <Button
+                                variant="outline"
+                                asChild
+                                className="bg-white/30 hover:bg-white/50 text-white border-white"
+                            >
+                                <Link href={route("projects.edit", project.id)}>
+                                    Edit Project
+                                </Link>
+                            </Button>
+                            <Button asChild className="bg-white/80 hover:bg-white text-orange-700 font-bold">
+                                <Link href={route("tasks.create")}>
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Add Task
+                                </Link>
+                            </Button>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-6">
-                            <Card>
+                    {/* Main Content */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Left Column */}
+                        <div className="lg:col-span-2 space-y-8">
+                            {/* Project Details */}
+                            <Card className="bg-white/80 shadow-lg">
                                 <CardHeader>
-                                    <CardTitle>Project Details</CardTitle>
+                                    <CardTitle className="text-orange-700">Project Details</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div>
-                                        <h3 className="text-sm font-medium">
-                                            Description
-                                        </h3>
-                                        <p className="mt-1 text-sm text-gray-500">
-                                            {project.description}
-                                        </p>
+                                        <h3 className="text-sm font-medium text-orange-700">Description</h3>
+                                        <p className="mt-1 text-sm text-gray-700">{project.description}</p>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <h3 className="text-sm font-medium">
-                                                Start Date
-                                            </h3>
-                                            <p className="mt-1 text-sm text-gray-500">
-                                                {new Date(
-                                                    project.start_date
-                                                ).toLocaleDateString()}
+                                            <h3 className="text-sm font-medium text-orange-700">Start Date</h3>
+                                            <p className="mt-1 text-sm text-gray-700">
+                                                {new Date(project.start_date).toLocaleDateString()}
                                             </p>
                                         </div>
                                         <div>
-                                            <h3 className="text-sm font-medium">
-                                                End Date
-                                            </h3>
-                                            <p className="mt-1 text-sm text-gray-500">
-                                                {new Date(
-                                                    project.end_date
-                                                ).toLocaleDateString()}
+                                            <h3 className="text-sm font-medium text-orange-700">End Date</h3>
+                                            <p className="mt-1 text-sm text-gray-700">
+                                                {new Date(project.end_date).toLocaleDateString()}
                                             </p>
                                         </div>
                                     </div>
                                     {project.category && (
                                         <div>
-                                            <h3 className="text-sm font-medium">
-                                                Category
-                                            </h3>
-                                            <p className="mt-1 text-sm text-gray-500">
-                                                {project.category}
-                                            </p>
+                                            <h3 className="text-sm font-medium text-orange-700">Category</h3>
+                                            <p className="mt-1 text-sm text-gray-700">{project.category}</p>
                                         </div>
                                     )}
                                 </CardContent>
                             </Card>
 
-                            <ProjectProgress
-                                progress={project.progress}
-                                status={project.status}
-                                totalTasks={project.tasks.length}
-                                completedTasks={
-                                    project.tasks.filter(
-                                        (task) => task.status === "completed"
-                                    ).length
-                                }
-                            />
+                            {/* Progress & Budget */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="bg-white/80 rounded-xl shadow-lg p-4">
+                                    <ProjectProgress
+                                        progress={project.progress}
+                                        status={project.status}
+                                        totalTasks={project.tasks.length}
+                                        completedTasks={
+                                            project.tasks.filter(
+                                                (task) => task.status === "completed"
+                                            ).length
+                                        }
+                                    />
+                                </div>
+                                <div className="bg-white/80 rounded-xl shadow-lg p-4">
+                                    <ProjectBudget
+                                        budget={project.budget}
+                                        spentBudget={project.spent_budget}
+                                        projectId={project.id}
+                                    />
+                                </div>
+                            </div>
 
-                            <ProjectBudget
-                                budget={project.budget}
-                                spentBudget={project.spent_budget}
-                                projectId={project.id}
-                            />
-                        </div>
-
-                        <div className="space-y-6">
-                            <ProjectTags
-                                tags={project.tags}
-                                projectId={project.id}
-                            />
-
-                            <ProjectAttachments
-                                attachments={project.attachments}
-                                projectId={project.id}
-                            />
-
-                            <Card>
+                            {/* Tasks */}
+                            <Card className="bg-white/80 shadow-lg">
                                 <CardHeader>
-                                    <CardTitle>Tasks</CardTitle>
+                                    <CardTitle className="text-orange-700">Tasks</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     {project.tasks.length > 0 ? (
@@ -188,45 +169,31 @@ export default function Show({ project, auth }: Props) {
                                             {project.tasks.map((task) => (
                                                 <div
                                                     key={task.id}
-                                                    className="flex items-center justify-between p-4 border rounded-lg"
+                                                    className="flex flex-col md:flex-row md:items-center md:justify-between p-4 border border-orange-200 rounded-lg bg-white/60"
                                                 >
                                                     <div>
-                                                        <h3 className="font-medium">
-                                                            {task.title}
-                                                        </h3>
-                                                        <p className="text-sm text-gray-500">
-                                                            {task.description}
-                                                        </p>
+                                                        <h3 className="font-medium text-orange-800">{task.title}</h3>
+                                                        <p className="text-sm text-gray-600">{task.description}</p>
                                                     </div>
-                                                    <div className="flex items-center gap-4">
-                                                        <span className="text-sm text-gray-500">
-                                                            {new Date(
-                                                                task.due_date
-                                                            ).toLocaleDateString()}
+                                                    <div className="flex items-center gap-4 mt-2 md:mt-0">
+                                                        <span className="text-sm text-orange-700 font-semibold">
+                                                            {new Date(task.due_date).toLocaleDateString()}
                                                         </span>
                                                         <Button
                                                             variant="ghost"
                                                             asChild
+                                                            className="text-orange-700 hover:bg-orange-100"
                                                         >
-                                                            <Link
-                                                                href={route(
-                                                                    "tasks.show",
-                                                                    task.id
-                                                                )}
-                                                            >
-                                                                detail
+                                                            <Link href={route("tasks.show", task.id)}>
+                                                                Detail
                                                             </Link>
                                                         </Button>
                                                         <Button
                                                             variant="ghost"
                                                             asChild
+                                                            className="text-orange-700 hover:bg-orange-100"
                                                         >
-                                                            <Link
-                                                                href={route(
-                                                                    "tasks.edit",
-                                                                    task.id
-                                                                )}
-                                                            >
+                                                            <Link href={route("tasks.edit", task.id)}>
                                                                 Edit
                                                             </Link>
                                                         </Button>
@@ -235,12 +202,20 @@ export default function Show({ project, auth }: Props) {
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-center text-gray-500">
-                                            No tasks yet
-                                        </p>
+                                        <p className="text-center text-gray-500">No tasks yet</p>
                                     )}
                                 </CardContent>
                             </Card>
+                        </div>
+
+                        {/* Right Column */}
+                        <div className="space-y-8">
+                            <div className="bg-white/80 rounded-xl shadow-lg p-4">
+                                <ProjectTags tags={project.tags} projectId={project.id} />
+                            </div>
+                            <div className="bg-white/80 rounded-xl shadow-lg p-4">
+                                <ProjectAttachments attachments={project.attachments} projectId={project.id} />
+                            </div>
                         </div>
                     </div>
                 </div>

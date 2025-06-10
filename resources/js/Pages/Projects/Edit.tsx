@@ -85,29 +85,29 @@ export default function Edit({ project, auth }: Props) {
         <AuthenticatedLayout user={auth.user}>
             <Head title={`Edit ${project.name}`} />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="mb-6">
-                        <Button variant="ghost" asChild className="mb-4">
+            <div className="min-h-screen bg-gradient-to-br from-orange-400 via-orange-500 to-orange-700 py-12">
+                <div className="max-w-3xl mx-auto px-4">
+                    <div className="mb-8 flex items-center gap-4">
+                        <Button variant="ghost" asChild className="bg-white/30 hover:bg-white/50 text-white">
                             <Link href={route("projects.show", project.id)}>
                                 <ArrowLeft className="mr-2 h-4 w-4" />
                                 Back to Project
                             </Link>
                         </Button>
-                        <h1 className="text-2xl font-semibold">Edit Project</h1>
+                        <h1 className="text-2xl font-bold text-white drop-shadow-lg">Edit Project</h1>
                     </div>
 
-                    <Card>
+                    <Card className="bg-white/90 shadow-xl">
                         <form onSubmit={handleSubmit}>
                             <CardHeader>
-                                <CardTitle>Project Details</CardTitle>
+                                <CardTitle className="text-orange-700">Project Details</CardTitle>
                                 <CardDescription>
                                     Update the project details below.
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent className="space-y-4">
+                            <CardContent className="space-y-5">
                                 <div className="space-y-2">
-                                    <Label htmlFor="name">Project Name</Label>
+                                    <Label htmlFor="name" className="text-orange-700">Project Name</Label>
                                     <Input
                                         id="name"
                                         value={data.name}
@@ -124,7 +124,7 @@ export default function Edit({ project, auth }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="description">
+                                    <Label htmlFor="description" className="text-orange-700">
                                         Description
                                     </Label>
                                     <Textarea
@@ -146,7 +146,7 @@ export default function Edit({ project, auth }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="status">Status</Label>
+                                    <Label htmlFor="status" className="text-orange-700">Status</Label>
                                     <Select
                                         value={data.status}
                                         onValueChange={(
@@ -183,7 +183,7 @@ export default function Edit({ project, auth }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Project Timeline</Label>
+                                    <Label className="text-orange-700">Project Timeline</Label>
                                     <DatePickerWithRange
                                         date={dateRange}
                                         onDateChange={handleDateRangeChange}
@@ -197,7 +197,7 @@ export default function Edit({ project, auth }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="budget">Budget</Label>
+                                    <Label htmlFor="budget" className="text-orange-700">Budget</Label>
                                     <Input
                                         id="budget"
                                         type="number"
@@ -215,7 +215,7 @@ export default function Edit({ project, auth }: Props) {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="category">Category</Label>
+                                    <Label htmlFor="category" className="text-orange-700">Category</Label>
                                     <Input
                                         id="category"
                                         value={data.category}
@@ -230,18 +230,21 @@ export default function Edit({ project, auth }: Props) {
                                     )}
                                 </div>
 
-                                <TagInput
-                                    tags={data.tags}
-                                    onTagsChange={handleTagsChange}
-                                />
-                                {errors.tags && (
-                                    <p className="text-sm text-red-500">
-                                        {errors.tags}
-                                    </p>
-                                )}
+                                <div className="space-y-2">
+                                    <Label className="text-orange-700">Tags</Label>
+                                    <TagInput
+                                        tags={data.tags}
+                                        onTagsChange={handleTagsChange}
+                                    />
+                                    {errors.tags && (
+                                        <p className="text-sm text-red-500">
+                                            {errors.tags}
+                                        </p>
+                                    )}
+                                </div>
 
                                 <div className="space-y-2">
-                                    <Label>Template</Label>
+                                    <Label className="text-orange-700">Template</Label>
                                     <div className="flex items-center space-x-2">
                                         <input
                                             type="checkbox"
@@ -275,7 +278,7 @@ export default function Edit({ project, auth }: Props) {
                                         Cancel
                                     </Link>
                                 </Button>
-                                <Button type="submit" disabled={processing}>
+                                <Button type="submit" disabled={processing} className="bg-orange-600 hover:bg-orange-700 text-white font-bold">
                                     {processing ? "Saving..." : "Save Changes"}
                                 </Button>
                             </CardFooter>
