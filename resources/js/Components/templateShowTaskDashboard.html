@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Tasks | ProjectFlow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .task-item {
+            transition: all 0.2s ease;
+        }
+        .task-item:hover {
+            transform: translateX(3px);
+            box-shadow: 0 2px 10px -3px rgba(0, 0, 0, 0.1);
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+        }
+        .progress-circle {
+            stroke-dasharray: 113;
+            stroke-dashoffset: 113;
+            transition: stroke-dashoffset 1s ease;
+        }
+        .task-checkbox:checked + .task-label {
+            text-decoration: line-through;
+            color: #9CA3AF;
+        }
+        .kanban-column {
+            min-height: 500px;
+        }
+        .priority-high {
+            border-left: 3px solid #EF4444;
+        }
+        .priority-medium {
+            border-left: 3px solid #F59E0B;
+        }
+        .priority-low {
+            border-left: 3px solid #10B981;
+        }
+        .drag-ghost {
+            opacity: 0.5;
+            background: #A5B4FC;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <svg class="h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        <span class="ml-2 text-xl font-bold text-gray-800">ProjectFlow</span>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Dashboard
+                        </a>
+                        <a href="#" class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Projects
+                        </a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Team
+                        </a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Reports
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    <button type="button" class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <span class="sr-only">View notifications</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                    </button>
+
+                    <!-- Profile dropdown -->
+                    <div class="ml-3 relative">
+                        <div class="flex items-center">
+                            <div class="text-right mr-3 hidden md:block">
+                                <p class="text-sm font-medium text-gray-700">Admin User</p>
+                                <p class="text-xs text-gray-500">admin@example.com</p>
+                            </div>
+                            <button type="button" class="bg-gray-100 rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="user-menu" aria-expanded="false" aria-haspopup="true">
+                                <span class="sr-only">Open user menu</span>
+                                <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                            </button>
+                        </div>
+
+                        <!-- Dropdown menu, show/hide based on menu state -->
+                        <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Your Profile</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Settings</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Project Header -->
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:justify-between md:items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center">
+                        <h1 class="text-2xl font-bold text-gray-900">Basia Wade Project</h1>
+                        <span class="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            In Progress
+                        </span>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-500">Laudantium repudian Nulla repellendus I Consectetur eaque a</p>
+                </div>
+                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                    <button class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Export
+                    </button>
+                    <button class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        New Task
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Project Stats -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <div class="bg-white shadow rounded-lg overflow-hidden">
+            <div class="px-6 py-4 grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-gray-500">Total Tasks</p>
+                        <p class="text-xl font-semibold text-gray-900">24</p>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-10 w-10 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-gray-500">Completed</p>
+                        <p class="text-xl font-semibold text-gray-900">8</p>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-10 w-10 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-gray-500">Due Soon</p>
+                        <p class="text-xl font-semibold text-gray-900">5</p>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="relative w-10 h-10">
+                            <svg class="w-full h-full" viewBox="0 0 36 36">
+                                <path
+                                    d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="#E5E7EB"
+                                    stroke-width="3"
+                                />
+                                <path
+                                    id="progress-circle"
+                                    class="progress-circle"
+                                    d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="#4F46E5"
+                                    stroke-width="3"
+                                    stroke-dasharray="100, 100"
+                                />
+                            </svg>
+                            <span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-indigo-600">35%</span>
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-gray-500">Progress</p>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5 mt-1.5">
+                            <div class="bg-blue-600 h-1.5 rounded-full" style="width: 35%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- Task List -->
+            <div class="lg:w-2/3">
+                <div class="bg-white shadow rounded-lg overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg font-medium text-gray-900">All Tasks</h2>
+                            <div class="flex space-x-3">
+                                <button class="text-gray-400 hover:text-gray-500">
+                                    <i class="fas fa-filter"></i>
+                                </button>
+                                <button class="text-gray-400 hover:text-gray-500">
+                                    <i class="fas fa-sort-amount-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        <!-- Task Item 1 -->
+                        <div class="task-item px-6 py-4 hover:bg-gray-50 priority-high">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 pt-0.5">
+                                    <input type="checkbox" class="task-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" id="task1">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <label for="task1" class="task-label block text-sm font-medium text-gray-900">
+                                        Design new dashboard layout
+                                    </label>
+                                    <p class="mt-1 text-xs text-gray-500">
+                                        Create wireframes for the new dashboard with improved analytics widgets and more efficient navigation.
+                                    </p>
+                                    <div class="mt-2 flex items-center text-xs text-gray-500">
+                                        <span class="flex items-center mr-3">
+                                            <span class="status-dot rounded-full bg-red-500 mr-1"></span>
+                                            High Priority
+                                        </span>
+                                        <span class="flex items-center mr-3">
+                                            <svg class="h-3 w-3 text-gray-400 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            Due today
+                                        </span>
+                                        <span class="flex items-center">
+                                            <img class="h-4 w-4 rounded-full mr-1" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                            John D.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="ml-4 flex-shrink-0">
+                                    <button class="text-gray-400 hover:text-gray-500">
+                                        <i class="far fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task Item 2 -->
+                        <div class="task-item px-6 py-4 hover:bg-gray-50 priority-medium">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 pt-0.5">
+                                    <input type="checkbox" class="task-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" id="task2" checked>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <label for="task2" class="task-label block text-sm font-medium text-gray-900">
+                                        Implement user authentication
+                                    </label>
+                                    <p class="mt-1 text-xs text-gray-500">
+                                        Set up OAuth 2.0 with Google and Facebook providers, plus email/password authentication.
+                                    </p>
+                                    <div class="mt-2 flex items-center text-xs text-gray-500">
+                                        <span class="flex items-center mr-3">
+                                            <span class="status-dot rounded-full bg-yellow-500 mr-1"></span>
+                                            Medium Priority
+                                        </span>
+                                        <span class="flex items-center mr-3">
+                                            <svg class="h-3 w-3 text-gray-400 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            Due 2 days ago
+                                        </span>
+                                        <span class="flex items-center">
+                                            <img class="h-4 w-4 rounded-full mr-1" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                            Sarah M.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="ml-4 flex-shrink-0">
+                                    <button class="text-gray-400 hover:text-gray-500">
+                                        <i class="far fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task Item 3 -->
+                        <div class="task-item px-6 py-4 hover:bg-gray-50">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 pt-0.5">
+                                    <input type="checkbox" class="task-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" id="task3">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <label for="task3" class="task-label block text-sm font-medium text-gray-900">
+                                        Write API documentation
+                                    </label>
+                                    <p class="mt-1 text-xs text-gray-500">
+                                        Document all endpoints, request/response examples, and authentication methods.
+                                    </p>
+                                    <div class="mt-2 flex items-center text-xs text-gray-500">
+                                        <span class="flex items-center mr-3">
+                                            <span class="status-dot rounded-full bg-gray-300 mr-1"></span>
+                                            Low Priority
+                                        </span>
+                                        <span class="flex items-center mr-3">
+                                            <svg class="h-3 w-3 text-gray-400 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            Due in 5 days
+                                        </span>
+                                        <span class="flex items-center">
+                                            <img class="h-4 w-4 rounded-full mr-1" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                            Robert J.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="ml-4 flex-shrink-0">
+                                    <button class="text-gray-400 hover:text-gray-500">
+                                        <i class="far fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task Item 4 -->
+                        <div class="task-item px-6 py-4 hover:bg-gray-50 priority-medium">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 pt-0.5">
+                                    <input type="checkbox" class="task-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" id="task4">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <label for="task4" class="task-label block text-sm font-medium text-gray-900">
+                                        Conduct user testing session
+                                    </label>
+                                    <p class="mt-1 text-xs text-gray-500">
+                                        Recruit 5 participants and schedule testing sessions for the new features.
+                                    </p>
+                                    <div class="mt-2 flex items-center text-xs text-gray-500">
+                                        <span class="flex items-center mr-3">
+                                            <span class="status-dot rounded-full bg-yellow-500 mr-1"></span>
+                                            Medium Priority
+                                        </span>
+                                        <span class="flex items-center mr-3">
+                                            <svg class="h-3 w-3 text-gray-400 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            Due in 3 days
+                                        </span>
+                                        <span class="flex items-center">
+                                            <img class="h-4 w-4 rounded-full mr-1" src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                            Lisa W.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="ml-4 flex-shrink-0">
+                                    <button class="text-gray-400 hover:text-gray-500">
+                                        <i class="far fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task Item 5 -->
+                        <div class="task-item px-6 py-4 hover:bg-gray-50 priority-high">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 pt-0.5">
+                                    <input type="checkbox" class="task-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" id="task5">
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <label for="task5" class="task-label block text-sm font-medium text-gray-900">
+                                        Fix critical login bug
+                                    </label>
+                                    <p class="mt-1 text-xs text-gray-500">
+                                        Some users reporting login failures. Need to investigate and patch immediately.
+                                    </p>
+                                    <div class="mt-2 flex items-center text-xs text-gray-500">
+                                        <span class="flex items-center mr-3">
+                                            <span class="status-dot rounded-full bg-red-500 mr-1"></span>
+                                            High Priority
+                                        </span>
+                                        <span class="flex items-center mr-3">
+                                            <svg class="h-3 w-3 text-gray-400 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            Due tomorrow
+                                        </span>
+                                        <span class="flex items-center">
+                                            <img class="h-4 w-4 rounded-full mr-1" src="https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                            Mike T.
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="ml-4 flex-shrink-0">
+                                    <button class="text-gray-400 hover:text-gray-500">
+                                        <i class="far fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Details -->
+            <div class="lg:w-1/3">
+                <div class="bg-white shadow rounded-lg overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Project Details</h2>
+                    </div>
+                    <div class="px-6 py-4">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Project Manager</label>
+                            <div class="flex items-center">
+                                <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                <span class="ml-2 text-sm">John Doe</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Team Members</label>
+                            <div class="flex -space-x-2">
+                                <img class="h-8 w-8 rounded-full border-2 border-white" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                <img class="h-8 w-8 rounded-full border-2 border-white" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                <img class="h-8 w-8 rounded-full border-2 border-white" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                <img class="h-8 w-8 rounded-full border-2 border-white" src="https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                <button class="h-8 w-8 rounded-full border-2 border-white bg-gray-200 text-gray-600 flex items-center justify-center text-xs">+3</button>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Timeline</label>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-indigo-600">21 Aug 2023</span>
+                                <span class="text-gray-500">to</span>
+                                <span class="text-indigo-600">07 Apr 2024</span>
+                            </div>
+                            <div class="relative mt-2">
+                                <div class="overflow-hidden h-1 text-xs flex rounded bg-blue-200">
+                                    <div style="width:35%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Project Description</label>
+                            <p class="text-sm text-gray-500">
+                                Laudantium repudian Nulla repellendus I Consectetur eaque a Voluptatum sint ea o Voluptas similique n Est sint omnis sint.
+                            </p>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                                    Development
+                                </span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                    Web
+                                </span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                                    SaaS
+                                </span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Files & Documents</label>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between p-2 border border-gray-200 rounded">
+                                    <div class="flex items-center">
+                                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        <span class="ml-2 text-sm truncate">project_specs.pdf</span>
+                                    </div>
+                                    <button class="text-gray-400 hover:text-gray-500">
+                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="flex items-center justify-between p-2 border border-gray-200 rounded">
+                                    <div class="flex items-center">
+                                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                        <span class="ml-2 text-sm truncate">wireframes.sketch</span>
+                                    </div>
+                                    <button class="text-gray-400 hover:text-gray-500">
+                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-6 py-3 text-right">
+                        <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Edit Project
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Profile dropdown toggle
+        document.getElementById('user-menu').addEventListener('click', function() {
+            const menu = document.querySelector('#user-menu + div');
+            menu.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('#user-menu + div');
+            const button = document.getElementById('user-menu');
+            
+            if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // Animate progress circle
+        document.addEventListener('DOMContentLoaded', function() {
+            const circle = document.getElementById('progress-circle');
+            if (circle) {
+                const radius = circle.r.baseVal.value;
+                const circumference = radius * 2 * Math.PI;
+                circle.style.strokeDasharray = circumference;
+                circle.style.strokeDashoffset = circumference - (35 / 100) * circumference;
+            }
+
+            // Priority indicators
+            document.querySelectorAll('.task-item').forEach(task => {
+                task.addEventListener('dragstart', function(e) {
+                    setTimeout(() => {
+                        this.classList.add('drag-ghost');
+                    }, 0);
+                });
+                
+                task.addEventListener('dragend', function(e) {
+                    this.classList.remove('drag-ghost');
+                });
+            });
+
+            // Make tasks draggable (basic implementation)
+            document.querySelectorAll('.task-item').forEach(task => {
+                task.setAttribute('draggable', 'true');
+                
+                task.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                });
+                
+                task.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    const draggedTask = document.querySelector('.drag-ghost');
+                    if (draggedTask && draggedTask !== this) {
+                        if (e.clientY < this.getBoundingClientRect().top + this.offsetHeight / 2) {
+                            this.parentNode.insertBefore(draggedTask, this);
+                        } else {
+                            this.parentNode.insertBefore(draggedTask, this.nextSibling);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
