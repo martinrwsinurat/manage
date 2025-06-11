@@ -1,4 +1,4 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+![uas](https://github.com/user-attachments/assets/8e7ef28b-fe8d-49df-b22c-c1e7e5ba1a28)<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
 <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
@@ -23,7 +23,8 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 
 ## Database ERD
 
-![Database ERD - Management System](https://github.com/user-attachments/assets/7bc2d7fc-1287-4448-a4f6-05fb6b311d96)
+![Database ERD - Management System](https://github.com/user-attachments/assets/61547a7d-c56e-4480-ae7c-263e16c379b9)
+
 
 
 
