@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\TestCloudinaryController;
 use App\Http\Controllers\TaskAttachmentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -67,10 +68,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/tasks/{task}/attachments/{attachment}', [TaskAttachmentController::class, 'destroy'])->name('tasks.attachments.destroy');
     Route::post('/tasks/{task}/attachments/{attachment}/comments', [TaskAttachmentController::class, 'storeComment'])->name('tasks.attachments.comments.store');
 
-    // Team Settings route (biar sidebar nyambung)
+    // Team Settings route (KIRIM DATA USERS KE REACT)
     Route::get('/teamsettings', function () {
-        return Inertia::render('TeamSettings/index');
+        return Inertia::render('TeamSettings/index', [
+            'users' => \App\Models\User::all()
+        ]);
     })->name('teamsettings');
+
+    // CRUD User route (resource)
+    Route::resource('users', UserController::class);
 });
 
 Route::get('/test-cloudinary', [TestCloudinaryController::class, 'test']);

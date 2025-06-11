@@ -47,7 +47,7 @@ export function ProjectTags({ tags, projectId }: ProjectTagsProps) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>komentar Tag</CardTitle>
+                <CardTitle>komentar </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <form onSubmit={handleSubmit} className="flex gap-2">
