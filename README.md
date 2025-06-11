@@ -23,7 +23,8 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 
 ## Database ERD
 
-![Database ERD - Management System](PASTE_GAMBAR_ERD_DISINI)
+![Database ERD - Management System](![Uploading WhatsApp Image 2025-06-11 at 16.35.56_fed38aee.jpg…]()
+)
 
 Entity Relationship Diagram untuk sistem management ini menunjukkan hubungan antar tabel dalam database.
 
