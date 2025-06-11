@@ -1,7 +1,9 @@
 {
     "private": true,
     "type": "module",
+    "homepage": "https://github.com/reqnwn/manage.git",
     "scripts": {
+        "deploy": "gh-pages-d build",
         "build": "tsc && vite build",
         "dev": "vite"
     },
