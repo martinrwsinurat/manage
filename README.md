@@ -22,6 +22,8 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 
 ## ERD
 
+
+
 ![Database ERD - Management System](https://github.com/user-attachments/assets/61547a7d-c56e-4480-ae7c-263e16c379b9)
 
 
