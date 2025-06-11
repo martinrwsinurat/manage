@@ -23,7 +23,7 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 
 ## Database ERD
 
-[Untitled Diagram drawio](https://github.com/user-attachments/assets/7bc2d7fc-1287-4448-a4f6-05fb6b311d96)
+![Database ERD - Management System](https://github.com/user-attachments/assets/7bc2d7fc-1287-4448-a4f6-05fb6b311d96)
 
 
 
