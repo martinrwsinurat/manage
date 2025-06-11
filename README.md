@@ -23,6 +23,8 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 ## Database ERD
 
 ![Database ERD - Management System](https://github.com/user-attachments/assets/61547a7d-c56e-4480-ae7c-263e16c379b9)
+![Database Flowchart - Management System](![pemweb lanjut1 2 drawio](https://github.com/user-attachments/assets/4fe34df2-8bec-4469-8bc0-c10f3e104f29)
+)
 
 
 
