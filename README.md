@@ -20,12 +20,9 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Database ERD
+## ERD
 
 ![Database ERD - Management System](https://github.com/user-attachments/assets/61547a7d-c56e-4480-ae7c-263e16c379b9)
-![Database Flowchart - Management System](![pemweb lanjut1 2 drawio](https://github.com/user-attachments/assets/4fe34df2-8bec-4469-8bc0-c10f3e104f29)
-)
-
 
 
 
@@ -36,6 +33,52 @@ Entity Relationship Diagram untuk sistem management ini menunjukkan hubungan ant
 - **Products/Items**: Data produk atau item yang dikelola
 - **Categories**: Kategori untuk organisasi data
 - **Transactions**: Pencatatan transaksi
+
+---
+
+## Flowchart
+
+![Database ERD - Management System](![pemweb lanjut1 2 drawio](https://github.com/user-attachments/assets/e4943cf2-0463-40b0-96a3-3393b61ed72c))
+
+## Berikut penjelasan singkat diagram alur sistem Kanban Board:
+
+Frontend (React):
+
+User Browser - Antarmuka pengguna
+
+React State Management - Mengelola state aplikasi (useState/Context)
+
+API Request - Mengirim permintaan ke backend (Axios/Fetch)
+
+Backend (Laravel):
+
+Routes - Menentukan endpoint API (api.php/web.php)
+
+Middleware - Autentikasi JWT
+
+Controller - Logika bisnis (TaskController)
+
+Request Validation - Validasi input
+
+Model - Interaksi database (Task, User)
+
+Alur Data:
+
+Frontend mengirim request → Backend memproses → Mengembalikan response JSON → Frontend menampilkan update
+
+Database:
+
+Penyimpanan data tasks dan user
+
+Sistem ini menggunakan arsitektur modern dengan:
+
+React untuk UI dinamis
+
+Laravel sebagai API server
+
+JWT untuk keamanan
+
+Axios/Fetch untuk komunikasi client-server
 
 ---
 
