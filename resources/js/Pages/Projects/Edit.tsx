@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Link, useForm, Head } from "@inertiajs/react";
+import { Link, useForm, Head, router } from "@inertiajs/react";
 import { ArrowLeft } from "lucide-react";
 import { User } from "@/types";
 import {
@@ -45,6 +45,14 @@ interface Props {
 }
 
 export default function Edit({ project, auth }: Props) {
+    // Tambahkan pengecekan role di sini
+    useEffect(() => {
+        const allowedRoles = ["admin", "project manager"];
+        if (!allowedRoles.includes(auth.user.role.toLowerCase())) {
+            router.visit("/dashboard");
+        }
+    }, [auth.user.role]);
+
     const [dateRange, setDateRange] = React.useState<DateRange>({
         from: new Date(project.start_date),
         to: new Date(project.end_date),

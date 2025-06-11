@@ -13,6 +13,7 @@ import { Progress } from "@/Components/ui/progress";
 import { User } from "@/types";
 import { formatDate } from "@/lib/utils";
 import { Users, Calendar } from "lucide-react";
+import React from "react";
 
 interface Task {
     id: number;
@@ -41,6 +42,9 @@ interface Props {
 }
 
 export default function Index({ auth, projects }: Props) {
+    // Hanya Admin & Project Manager yang bisa buat project
+    const canCreateProject = ["admin", "project manager"].includes(auth.user.role.toLowerCase());
+
     return (
         <AuthenticatedLayout>
             <Head title="Projects" />
@@ -56,9 +60,11 @@ export default function Index({ auth, projects }: Props) {
                     
                     <div className="mb-6 flex justify-between items-center">
                         <h1 className="text-2xl font-semibold text-orange-900">TUGAS SAYA</h1>
-                        <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white">
-                            <Link href="/projects/create">Buat projek</Link>
-                        </Button>
+                        {canCreateProject && (
+                            <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white">
+                                <Link href="/projects/create">Buat projek</Link>
+                            </Button>
+                        )}
                     </div>
 
                     {/* Ubah grid agar card lebih lebar */}

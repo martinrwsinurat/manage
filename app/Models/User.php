@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Facades\Cache; // <-- Tambahkan ini
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -69,9 +70,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function isOnline()
-{
-    return Cache::has('user-is-online-' . $this->id);
-}
-
- 
+    {
+        return Cache::has('user-is-online-' . $this->id);
+    }
 }

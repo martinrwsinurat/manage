@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Button } from "@/Components/ui/button";
 import {
@@ -12,7 +12,7 @@ import {
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
-import { Link, useForm, Head } from "@inertiajs/react";
+import { Link, useForm, Head, router } from "@inertiajs/react";
 import { ArrowLeft, Briefcase, Calendar, DollarSign, User, Tag, FileText } from "lucide-react";
 import { User as UserType } from "@/types";
 import {
@@ -35,6 +35,14 @@ interface Props {
 
 export default function Create({ users, auth }: Props) {
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>();
+
+    // Role check: Only allow admin or project manager
+    useEffect(() => {
+        const allowedRoles = ["admin", "project manager"];
+        if (!allowedRoles.includes(auth.user.role.toLowerCase())) {
+            router.visit("/dashboard");
+        }
+    }, [auth.user.role]);
 
     const { data, setData, post, processing, errors } = useForm({
         name: "",
@@ -251,7 +259,7 @@ export default function Create({ users, auth }: Props) {
                                 {/* Budget */}
                                 <div className="space-y-3">
                                     <Label htmlFor="budget" className="text-lg font-semibold text-gray-700 flex items-center">
-                                        {/* <DollarSign className="mr-2 h-5 w-5 text-orange-500" /> */}
+                                        <DollarSign className="mr-2 h-5 w-5 text-orange-500" />
                                         Biaya Pengerjaan
                                     </Label>
                                     <div className="relative">

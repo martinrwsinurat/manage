@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -49,7 +50,6 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Get upcoming deadlines (tasks due in the next 7 days)
         $upcomingDeadlines = Task::with('project')
             ->where('due_date', '>=', now())
             ->where('due_date', '<=', now()->addDays(7))
@@ -67,7 +67,6 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Get team members with their roles and status
         $teamMembers = User::with('roles')
             ->get()
             ->map(function ($user) {
@@ -75,11 +74,9 @@ class DashboardController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                    // 'role' => $user->roles->first()?->name ?? 'Member',
-                    'role' =>  'Member',
-                    'avatar' => $user->profile_photo_url,
-                    // 'status' => $user->isOnline() ? 'online' : 'offline',
-                    'status' =>  'offline',
+                    'role' => $user->roles->first()?->name ?? 'Member',
+                    'avatar' => $user->profile_photo_url ?? null,
+                    'status' => method_exists($user, 'isOnline') && $user->isOnline() ? 'online' : 'offline',
                 ];
             });
 
@@ -89,6 +86,13 @@ class DashboardController extends Controller
             'recentTasks' => $recentTasks,
             'upcomingDeadlines' => $upcomingDeadlines,
             'teamMembers' => $teamMembers,
+            'auth' => [
+                'user' => [
+                    'id' => Auth::id(),
+                    'name' => Auth::user()->name,
+                    'role' => Auth::user()->getRoleNames()->first() ?? 'Member', // fallback jika belum ada role
+                ]
+            ],
         ]);
     }
-} 
+}

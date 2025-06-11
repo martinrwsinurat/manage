@@ -63,6 +63,13 @@ interface DashboardProps extends PageProps {
         avatar: string;
         status: "online" | "offline" | "away";
     }[];
+    auth: {
+        user: {
+            id: number;
+            name: string;
+            role: string;
+        }
+    }
 }
 
 export default function Dashboard({
@@ -71,6 +78,7 @@ export default function Dashboard({
     recentTasks,
     upcomingDeadlines,
     teamMembers,
+    auth,
 }: DashboardProps) {
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -87,6 +95,7 @@ export default function Dashboard({
         const roleColors: { [key: string]: string } = {
             'admin': 'bg-red-500 hover:bg-red-600',
             'manager': 'bg-blue-500 hover:bg-blue-600',
+            'project manager': 'bg-blue-500 hover:bg-blue-600',
             'developer': 'bg-purple-500 hover:bg-purple-600',
             'designer': 'bg-pink-500 hover:bg-pink-600',
             'qa': 'bg-orange-500 hover:bg-orange-600',
@@ -104,9 +113,11 @@ export default function Dashboard({
                         <h1 className={`text-3xl font-bold ${orangeText}`}>Projek</h1>
                         <p className="mt-1 text-base text-[#B05A00]">Tuangkan idemu dalam projek</p>
                     </div>
-                    <Button asChild className={`${orangeButton} rounded-lg px-6 py-2 font-semibold`}>
-                        <Link href={route("projects.create")}>Buat projek</Link>
-                    </Button>
+                    {(auth.user.role === "admin" || auth.user.role === "project manager") && (
+                        <Button asChild className={`${orangeButton} rounded-lg px-6 py-2 font-semibold`}>
+                            <Link href={route("projects.create")}>Buat projek</Link>
+                        </Button>
+                    )}
                 </div>
 
                 {/* Stats Cards */}
@@ -203,10 +214,12 @@ export default function Dashboard({
                 <Card className={`${orangeCard} mb-8 shadow-none`}>
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className={orangeText}>Anggota Basis</CardTitle>
-                        <Button variant="outline" size="sm" className={`${orangeButton} border-0`}>
-                            <UserPlus className="h-4 w-4 mr-2" />
-                            Tambah Anggota
-                        </Button>
+                        {auth.user.role === "admin" && (
+                            <Button variant="outline" size="sm" className={`${orangeButton} border-0`}>
+                                <UserPlus className="h-4 w-4 mr-2" />
+                                Tambah Anggota
+                            </Button>
+                        )}
                     </CardHeader>
                     <CardContent>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

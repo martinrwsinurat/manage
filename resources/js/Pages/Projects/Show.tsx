@@ -37,6 +37,10 @@ interface Props {
             description: string;
             status: string;
             due_date: string;
+            assigned_to?: {
+                id: number;
+                name: string;
+            } | null;
         }>;
     };
     auth: {
@@ -45,6 +49,22 @@ interface Props {
 }
 
 export default function Show({ project, auth }: Props) {
+    // Permission checks
+    const isAdmin = auth.user.role.toLowerCase() === "admin";
+    const isPM = auth.user.role.toLowerCase() === "project manager";
+    const isTeamMember = auth.user.role.toLowerCase() === "team member";
+
+    // Only PM can assign tasks
+    const canAssignTask = isPM;
+    // Only PM or assigned team member can update task
+    const canEditTask = (task: Props["project"]["tasks"][0]) =>
+        isPM || (isTeamMember && task.assigned_to && task.assigned_to.id === auth.user.id);
+
+    // Only Admin & PM can edit project
+    const canEditProject = isAdmin || isPM;
+    // Only Admin can delete project
+    const canDeleteProject = isAdmin;
+
     const handleDuplicateTemplate = () => {
         if (
             confirm(
@@ -55,14 +75,23 @@ export default function Show({ project, auth }: Props) {
         }
     };
 
+    const handleDeleteProject = () => {
+        if (
+            confirm(
+                "Apakah Anda yakin ingin menghapus proyek ini? Tindakan ini tidak dapat dibatalkan."
+            )
+        ) {
+            router.delete(route("projects.destroy", project.id));
+        }
+    };
+
     return (
         <AuthenticatedLayout user={auth.user}>
             <Head title={project.name} />
 
             <div className="min-h-screen bg-gradient-to-br from-orange-400 via-orange-500 to-orange-700 py-8 px-4">
-                {/* Container dengan max-width yang lebih kecil dan centered */}
                 <div className="max-w-7xl mx-auto">
-                    {/* Header - Lebih compact */}
+                    {/* Header */}
                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 gap-4">
                         <div className="flex items-center gap-4">
                             <Button variant="ghost" asChild className="bg-white/20 hover:bg-white/30 text-white border-white/30">
@@ -76,6 +105,7 @@ export default function Show({ project, auth }: Props) {
                             </h1>
                         </div>
                         <div className="flex flex-wrap gap-2">
+                            {/* Duplicate as template: visible to all */}
                             <Button
                                 variant="outline"
                                 className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-sm"
@@ -83,27 +113,43 @@ export default function Show({ project, auth }: Props) {
                             >
                                 Membuat salinan 
                             </Button>
-                            <Button
-                                variant="outline"
-                                asChild
-                                className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-sm"
-                            >
-                                <Link href={route("projects.edit", project.id)}>
-                                    Edit Projek
-                                </Link>
-                            </Button>
-                            <Button asChild className="bg-white/90 hover:bg-white text-orange-700 font-bold text-sm">
-                                <Link href={route("tasks.create")}>
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Tambah Tugas    
-                                </Link>
-                            </Button>
+                            {/* Edit Project: Only Admin & PM */}
+                            {canEditProject && (
+                                <Button
+                                    variant="outline"
+                                    asChild
+                                    className="bg-white/20 hover:bg-white/30 text-white border-white/30 text-sm"
+                                >
+                                    <Link href={route("projects.edit", project.id)}>
+                                        Edit Projek
+                                    </Link>
+                                </Button>
+                            )}
+                            {/* Delete Project: Only Admin */}
+                            {canDeleteProject && (
+                                <Button
+                                    variant="destructive"
+                                    className="text-sm"
+                                    onClick={handleDeleteProject}
+                                >
+                                    Hapus Projek
+                                </Button>
+                            )}
+                            {/* Assign Task: Only PM */}
+                            {canAssignTask && (
+                                <Button asChild className="bg-white/90 hover:bg-white text-orange-700 font-bold text-sm">
+                                    <Link href={route("tasks.create")}>
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        Tambah Tugas    
+                                    </Link>
+                                </Button>
+                            )}
                         </div>
                     </div>
 
-                    {/* Main Content - Grid dengan breakpoint yang lebih baik */}
+                    {/* Main Content */}
                     <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-                        {/* Left Column - Ambil 3 kolom dari 4 */}
+                        {/* Left Column */}
                         <div className="xl:col-span-3 space-y-6">
                             {/* Project Details */}
                             <Card className="bg-white/90 backdrop-blur-sm shadow-xl">
@@ -138,7 +184,7 @@ export default function Show({ project, auth }: Props) {
                                 </CardContent>
                             </Card>
 
-                            {/* Progress & Budget - Grid yang lebih responsive */}
+                            {/* Progress & Budget */}
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <Card className="bg-white/90 backdrop-blur-sm shadow-xl">
                                     <CardContent className="p-6">
@@ -191,6 +237,7 @@ export default function Show({ project, auth }: Props) {
                                                             {new Date(task.due_date).toLocaleDateString('id-ID')}
                                                         </span>
                                                         <div className="flex gap-2">
+                                                            {/* Semua role bisa lihat detail */}
                                                             <Button
                                                                 variant="ghost"
                                                                 size="sm"
@@ -201,16 +248,19 @@ export default function Show({ project, auth }: Props) {
                                                                     Detail
                                                                 </Link>
                                                             </Button>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                asChild
-                                                                className="text-orange-700 hover:bg-orange-100"
-                                                            >
-                                                                <Link href={route("tasks.edit", task.id)}>
-                                                                    Edit
-                                                                </Link>
-                                                            </Button>
+                                                            {/* Edit Task: PM atau Team Member assigned */}
+                                                            {canEditTask(task) && (
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    asChild
+                                                                    className="text-orange-700 hover:bg-orange-100"
+                                                                >
+                                                                    <Link href={route("tasks.edit", task.id)}>
+                                                                        Edit
+                                                                    </Link>
+                                                                </Button>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -219,19 +269,22 @@ export default function Show({ project, auth }: Props) {
                                     ) : (
                                         <div className="text-center py-8">
                                             <p className="text-gray-500 mb-4">Belum ada tugas</p>
-                                            <Button asChild className="bg-orange-600 hover:bg-orange-700">
-                                                <Link href={route("tasks.create")}>
-                                                    <Plus className="mr-2 h-4 w-4" />
-                                                    Tambah Tugas Pertama
-                                                </Link>
-                                            </Button>
+                                            {/* Hanya PM yang bisa assign/buat tugas */}
+                                            {canAssignTask && (
+                                                <Button asChild className="bg-orange-600 hover:bg-orange-700">
+                                                    <Link href={route("tasks.create")}>
+                                                        <Plus className="mr-2 h-4 w-4" />
+                                                        Tambah Tugas Pertama
+                                                    </Link>
+                                                </Button>
+                                            )}
                                         </div>
                                     )}
                                 </CardContent>
                             </Card>
                         </div>
 
-                        {/* Right Column - Sidebar yang lebih compact */}
+                        {/* Right Column - Sidebar */}
                         <div className="xl:col-span-1 space-y-6">
                             <Card className="bg-white/90 backdrop-blur-sm shadow-xl">
                                 <CardContent className="p-6">
