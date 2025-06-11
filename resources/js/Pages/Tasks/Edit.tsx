@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Link, useForm, Head } from "@inertiajs/react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, AlertCircle } from "lucide-react";
 import { User } from "@/types";
 import {
     Select,
@@ -24,7 +24,13 @@ import {
 } from "@/components/ui/select";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+
+interface Project {
+    id: number;
+    name: string;
+    start_date: string;
+    end_date: string;
+}
 
 interface Props {
     task: {
@@ -35,29 +41,20 @@ interface Props {
         due_date: string;
         project_id: number;
         assigned_to: number | null;
-        attachments: {
-            id: number;
-            filename: string;
-            path: string;
-            type: string;
-            uploaded_at: string;
-            comments: {
-                id: number;
-                content: string;
-                user: {
-                    id: number;
-                    name: string;
-                    avatar?: string;
-                };
-                created_at: string;
-            }[];
-        }[];
+        attachments: any[];
     };
     projects: Project[];
     users: User[];
     auth: {
-        user: User;
+        user: User & { role: string };
     };
+}
+
+// Helper: cek apakah user boleh update task
+function canUpdateTask(user: User & { role: string }, task: { assigned_to: number | null }) {
+    if (user.role === "project_manager") return true;
+    if (user.role === "team_member" && user.id === task.assigned_to) return true;
+    return false;
 }
 
 export default function Edit({ auth, task, users, projects }: Props) {
@@ -132,6 +129,39 @@ export default function Edit({ auth, task, users, projects }: Props) {
         }
         put(route("tasks.update", task.id));
     };
+
+    // Permission check
+    if (!canUpdateTask(auth.user, task)) {
+        return (
+            <AuthenticatedLayout user={auth.user}>
+                <Head title="Akses Ditolak" />
+                <div className="py-12 min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-300">
+                    <Card className="max-w-md w-full shadow-2xl border-0 bg-white/90">
+                        <CardHeader>
+                            <CardTitle className="text-red-600">
+                                Akses Ditolak
+                            </CardTitle>
+                            <CardDescription>
+                                Anda tidak memiliki izin untuk mengedit tugas ini.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardFooter className="flex justify-end">
+                            <Button
+                                asChild
+                                variant="outline"
+                                className="border-orange-400 text-orange-700 hover:bg-orange-50"
+                            >
+                                <Link href="/tasks">
+                                    <ArrowLeft className="mr-2 h-4 w-4" />
+                                    Kembali ke Daftar Tugas
+                                </Link>
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </div>
+            </AuthenticatedLayout>
+        );
+    }
 
     return (
         <AuthenticatedLayout user={auth.user}>

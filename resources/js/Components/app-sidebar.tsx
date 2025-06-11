@@ -6,11 +6,9 @@ import {
     Users,
     Settings2,
     Plus,
+    User as UserIcon,
 } from "lucide-react";
 
-import { NavMain } from "@/Components/nav-main";
-import { NavProjects } from "@/Components/nav-projects";
-import { NavUser } from "@/Components/nav-user";
 import {
     Sidebar,
     SidebarContent,
@@ -82,11 +80,7 @@ const data = {
                 },
                 {
                     title: "Pengaturan Tim",
-                    url: "/team/settings",
-                },
-                {
-                    title: "pengaturan projek",
-                    url: "/projects/settings",
+                    url: "/teamsettings",
                 },
             ],
         },
@@ -109,20 +103,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar
             collapsible="icon"
-            className={`${sidebarBg} min-h-screen w-56`} // Lebar diperkecil dari default
+            className={`${sidebarBg} min-h-screen w-56`}
             {...props}
         >
             <SidebarHeader className="py-3">
-                {/* User info - diperkecil */}
+                {/* User info - pakai icon */}
                 <div className="flex items-center gap-2 px-3">
-                    <img
-                        src={data.user.avatar}
-                        alt={data.user.name}
-                        className="w-8 h-8 rounded-full object-cover border border-slate-300"
-                    />
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border border-slate-300">
+                        <UserIcon className="w-5 h-5 text-blue-500" />
+                    </div>
                     <div className="flex-1 min-w-0">
-                        <div className={`font-medium text-sm ${sidebarText} truncate`}>{data.user.name}</div>
-                        <div className="text-xs text-slate-500 truncate">{data.user.email}</div>
+                        <div className={`font-medium text-sm ${sidebarText} truncate`}>{data.user.name || ""}</div>
+                        <div className="text-xs text-slate-500 truncate">{data.user.email || ""}</div>
                     </div>
                 </div>
             </SidebarHeader>
@@ -186,8 +178,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </ul>
                 </div>
             </SidebarContent>
-            
-            {/* Tombol Keluar dihapus */}
             
             <SidebarRail />
         </Sidebar>

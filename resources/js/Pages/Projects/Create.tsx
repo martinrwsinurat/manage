@@ -13,7 +13,7 @@ import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
 import { Link, useForm, Head, router } from "@inertiajs/react";
-import { ArrowLeft, Briefcase, Calendar, DollarSign, User, Tag, FileText } from "lucide-react";
+import { ArrowLeft, Briefcase, Calendar, DollarSign, User, Tag, FileText, AlertCircle } from "lucide-react";
 import { User as UserType } from "@/types";
 import {
     Select,
@@ -29,20 +29,17 @@ import { TagInput } from "@/Components/project/TagInput";
 interface Props {
     users: UserType[];
     auth: {
-        user: UserType;
+        user: UserType & { role: string };
     };
+}
+
+// Helper: cek apakah user boleh create project
+function canCreateProject(role: string) {
+    return role === "admin" || role === "project_manager";
 }
 
 export default function Create({ users, auth }: Props) {
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>();
-
-    // Role check: Only allow admin or project manager
-    useEffect(() => {
-        const allowedRoles = ["admin", "project manager"];
-        if (!allowedRoles.includes(auth.user.role.toLowerCase())) {
-            router.visit("/dashboard");
-        }
-    }, [auth.user.role]);
 
     const { data, setData, post, processing, errors } = useForm({
         name: "",
@@ -74,6 +71,40 @@ export default function Create({ users, auth }: Props) {
     const handleTagsChange = (newTags: string[]) => {
         setData("tags", newTags);
     };
+
+    // Jika user tidak punya izin, tampilkan pesan akses ditolak
+    if (!canCreateProject(auth.user.role?.toLowerCase())) {
+        return (
+            <AuthenticatedLayout>
+                <Head title="Akses Ditolak" />
+                <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-300">
+                    <Card className="max-w-md w-full shadow-2xl border-0 bg-white/90">
+                        <CardHeader>
+                            <CardTitle className="text-red-600 flex items-center">
+                                <AlertCircle className="w-5 h-5 mr-2" />
+                                Akses Ditolak
+                            </CardTitle>
+                            <CardDescription>
+                                Anda tidak memiliki izin untuk membuat projek.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardFooter className="flex justify-end">
+                            <Button
+                                asChild
+                                variant="outline"
+                                className="border-orange-400 text-orange-700 hover:bg-orange-50"
+                            >
+                                <Link href="/dashboard">
+                                    <ArrowLeft className="mr-2 h-4 w-4" />
+                                    Kembali ke Dashboard
+                                </Link>
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </div>
+            </AuthenticatedLayout>
+        );
+    }
 
     return (
         <AuthenticatedLayout>

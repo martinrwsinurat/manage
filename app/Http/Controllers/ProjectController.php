@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Controllers;
 
 use App\Models\Project;
@@ -7,7 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // Tambahkan ini
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
@@ -120,6 +121,11 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
+        // Hanya admin yang boleh hapus project
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized');
+        }
+
         // Delete all attachments
         if ($project->attachments) {
             foreach ($project->attachments as $attachment) {
@@ -255,4 +261,4 @@ class ProjectController extends Controller
         $project->calculateProgress();
         return back()->with('success', 'Project progress updated successfully.');
     }
-} 
+}

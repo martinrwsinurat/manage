@@ -24,12 +24,10 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
-
     Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
-
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 });
 
@@ -68,8 +66,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/tasks/{task}/attachments', [TaskAttachmentController::class, 'store'])->name('tasks.attachments.store');
     Route::delete('/tasks/{task}/attachments/{attachment}', [TaskAttachmentController::class, 'destroy'])->name('tasks.attachments.destroy');
     Route::post('/tasks/{task}/attachments/{attachment}/comments', [TaskAttachmentController::class, 'storeComment'])->name('tasks.attachments.comments.store');
+
+    // Team Settings route (biar sidebar nyambung)
+    Route::get('/teamsettings', function () {
+        return Inertia::render('TeamSettings/index');
+    })->name('teamsettings');
 });
 
 Route::get('/test-cloudinary', [TestCloudinaryController::class, 'test']);
 
-require __DIR__.'/auth.php'; 
+require __DIR__.'/auth.php';

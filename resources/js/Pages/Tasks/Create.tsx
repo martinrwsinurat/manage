@@ -39,8 +39,13 @@ interface Props {
     projects: Project[];
     users: User[];
     auth: {
-        user: User;
+        user: User & { role: string }; // pastikan ada role
     };
+}
+
+// Helper: cek apakah user boleh assign/create task
+function canCreateTask(role: string) {
+    return role === "admin" || role === "project_manager";
 }
 
 export default function Create({ auth, users, projects }: Props) {
@@ -132,6 +137,39 @@ export default function Create({ auth, users, projects }: Props) {
             },
         });
     };
+
+    // Jika user tidak punya izin, tampilkan pesan error
+    if (!canCreateTask(auth.user.role)) {
+        return (
+            <AuthenticatedLayout user={auth.user}>
+                <Head title="Akses Ditolak" />
+                <div className="py-12 min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-300">
+                    <Card className="max-w-md w-full shadow-2xl border-0 bg-white/90">
+                        <CardHeader>
+                            <CardTitle className="text-red-600">
+                                Akses Ditolak
+                            </CardTitle>
+                            <CardDescription>
+                                Anda tidak memiliki izin untuk membuat tugas.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardFooter className="flex justify-end">
+                            <Button
+                                asChild
+                                variant="outline"
+                                className="border-orange-400 text-orange-700 hover:bg-orange-50"
+                            >
+                                <Link href="/tasks">
+                                    <ArrowLeft className="mr-2 h-4 w-4" />
+                                    Kembali ke Daftar Tugas
+                                </Link>
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </div>
+            </AuthenticatedLayout>
+        );
+    }
 
     return (
         <AuthenticatedLayout user={auth.user}>

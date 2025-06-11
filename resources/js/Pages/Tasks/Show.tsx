@@ -49,8 +49,15 @@ interface Props {
         }[];
     };
     auth: {
-        user: User;
+        user: User & { role: string };
     };
+}
+
+// Helper: cek apakah user boleh update task
+function canUpdateTask(user: User & { role: string }, task: { assignee: { id: number } | null }) {
+    if (user.role === "project_manager") return true;
+    if (user.role === "team_member" && user.id === task.assignee?.id) return true;
+    return false;
 }
 
 export default function Show({ auth, task }: Props) {
@@ -91,11 +98,13 @@ export default function Show({ auth, task }: Props) {
                             <h1 className="text-2xl font-semibold mb-2 md:mb-0 text-gray-900">
                                 {task.title}
                             </h1>
-                            <Button variant="outline" asChild>
-                                <Link href={`/tasks/${task.id}/edit`}>
-                                    Edit Tugas
-                                </Link>
-                            </Button>
+                            {canUpdateTask(auth.user, task) && (
+                                <Button variant="outline" asChild>
+                                    <Link href={`/tasks/${task.id}/edit`}>
+                                        Edit Tugas
+                                    </Link>
+                                </Button>
+                            )}
                         </div>
                     </div>
 

@@ -33,7 +33,7 @@ interface Task {
 
 interface Props {
     auth: {
-        user: User;
+        user: User & { role: string };
     };
     tasks: Task[];
 }
@@ -43,6 +43,16 @@ const columns = [
     { id: "in_progress", title: "Sedang Dikerjakan" },
     { id: "completed", title: "Selesai" },
 ];
+
+// Helper permission
+function canCreateTask(role: string) {
+    return role === "project_manager";
+}
+function canUpdateTask(user: User & { role: string }, task: Task) {
+    if (user.role === "project_manager") return true;
+    if (user.role === "team_member" && user.id === task.assignee?.id) return true;
+    return false;
+}
 
 export default function Index({ auth, tasks }: Props) {
     const [taskState, setTaskState] = React.useState<Task[]>(tasks);
@@ -65,6 +75,9 @@ export default function Index({ auth, tasks }: Props) {
         const taskId = parseInt(draggableId);
         const task = taskState.find((t) => t.id === taskId);
         if (!task) return;
+
+        // Hanya Project Manager atau Team Member assigned yang bisa update status
+        if (!canUpdateTask(auth.user, task)) return;
 
         const newStatus = destination.droppableId as Task["status"];
         setTaskState((prev) =>
@@ -95,9 +108,11 @@ export default function Index({ auth, tasks }: Props) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="mb-6 flex justify-between items-center">
                         <h1 className="text-2xl font-semibold">Tugas Saya</h1>
-                        <Button asChild>
-                            <Link href="/tasks/create">Buat Tugas</Link>
-                        </Button>
+                        {canCreateTask(auth.user.role) && (
+                            <Button asChild>
+                                <Link href="/tasks/create">Buat Tugas</Link>
+                            </Button>
+                        )}
                     </div>
 
                     <DragDropContext onDragEnd={onDragEnd}>
@@ -121,6 +136,7 @@ export default function Index({ auth, tasks }: Props) {
                                                         key={task.id}
                                                         draggableId={task.id.toString()}
                                                         index={i}
+                                                        isDragDisabled={!canUpdateTask(auth.user, task)}
                                                     >
                                                         {(provided, snapshot) => (
                                                             <div
@@ -130,6 +146,9 @@ export default function Index({ auth, tasks }: Props) {
                                                                 style={{
                                                                     ...provided.draggableProps.style,
                                                                     opacity: snapshot.isDragging ? 0.7 : 1,
+                                                                    cursor: canUpdateTask(auth.user, task)
+                                                                        ? "grab"
+                                                                        : "not-allowed",
                                                                 }}
                                                             >
                                                                 <TaskCard task={task} />
