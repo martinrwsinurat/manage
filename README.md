@@ -1,4 +1,3 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
 <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
@@ -21,9 +20,11 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Database ERD
+## ERD
 
-![Database ERD - Management System](https://github.com/user-attachments/assets/7bc2d7fc-1287-4448-a4f6-05fb6b311d96)
+
+
+![Database ERD - Management System](https://github.com/user-attachments/assets/61547a7d-c56e-4480-ae7c-263e16c379b9)
 
 
 
@@ -34,6 +35,52 @@ Entity Relationship Diagram untuk sistem management ini menunjukkan hubungan ant
 - **Products/Items**: Data produk atau item yang dikelola
 - **Categories**: Kategori untuk organisasi data
 - **Transactions**: Pencatatan transaksi
+
+---
+
+## Flowchart
+
+![Database ERD - Management System](![pemweb lanjut1 2 drawio](https://github.com/user-attachments/assets/e4943cf2-0463-40b0-96a3-3393b61ed72c))
+
+## Berikut penjelasan singkat diagram alur sistem Kanban Board:
+
+Frontend (React):
+
+User Browser - Antarmuka pengguna
+
+React State Management - Mengelola state aplikasi (useState/Context)
+
+API Request - Mengirim permintaan ke backend (Axios/Fetch)
+
+Backend (Laravel):
+
+Routes - Menentukan endpoint API (api.php/web.php)
+
+Middleware - Autentikasi JWT
+
+Controller - Logika bisnis (TaskController)
+
+Request Validation - Validasi input
+
+Model - Interaksi database (Task, User)
+
+Alur Data:
+
+Frontend mengirim request → Backend memproses → Mengembalikan response JSON → Frontend menampilkan update
+
+Database:
+
+Penyimpanan data tasks dan user
+
+Sistem ini menggunakan arsitektur modern dengan:
+
+React untuk UI dinamis
+
+Laravel sebagai API server
+
+JWT untuk keamanan
+
+Axios/Fetch untuk komunikasi client-server
 
 ---
 
