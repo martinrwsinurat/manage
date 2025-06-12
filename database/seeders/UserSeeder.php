@@ -36,15 +36,25 @@ class UserSeeder extends Seeder
 
         // Create another Team Member
         User::create([
-            'name' => 'Another Team Member',
-            'email' => 'member2@example.com',
+            'name' => 'MartinRizkiWendiSinurat',
+            'email' => 'Martin152@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'team_member',
         ]);
 
         User::create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Firja',
+            'email' => 'firja@gmail.com',
+            'password' => Hash::make('password'),
+        ]);
+        User::create([
+            'name' => 'Rizkidwi',
+            'email' => 'Rizkidwi@gmail.com',
+            'password' => Hash::make('password'),
+        ]);
+        User::create([
+            'name' => 'Aristio',
+            'email' => 'Aristio@gmail.com',
             'password' => Hash::make('password'),
         ]);
     }
